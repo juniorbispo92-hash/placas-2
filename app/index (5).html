@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#151a22">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Placas">
+<title>Placas NeoVibe</title>
+<style>
+:root{
+  --bg:#f3f4f6;--surface:#fff;--ink:#151a22;--muted:#5d6675;--line:#dde1e8;
+  --accent:#1f5fd1;--accent-ink:#fff;--accent-soft:#e6eefc;--star:#f2a900;
+  --ok:#14804a;--ok-soft:#e3f4ea;--warn:#a15c00;--warn-soft:#fdf0dc;--bad:#b42318;--bad-soft:#fde8e6;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1218;--surface:#181d26;--ink:#e8ebf1;--muted:#98a1b2;--line:#2a3140;
+  --accent:#6f9cff;--accent-ink:#0b1020;--accent-soft:#1c2840;--star:#ffc233;
+  --ok:#4cc38a;--ok-soft:#142a1f;--warn:#f0a94a;--warn-soft:#2e2312;--bad:#ff8a7a;--bad-soft:#331816;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+header .wrap{display:flex;align-items:center;gap:10px;padding-block:12px}
+header .mark{width:30px;height:30px;border-radius:8px;background:#000;color:var(--star);display:grid;place-items:center;font-size:17px}
+header h1{font-size:17px;margin:0;flex:1}
+header .sync{font-size:12px;opacity:.8}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.bottom .wrap{display:grid;grid-template-columns:repeat(3,1fr)}
+nav.bottom button{background:none;border:0;padding:10px 4px 12px;font-size:13px;font-weight:600;color:var(--muted);display:grid;justify-items:center;gap:2px;cursor:pointer}
+nav.bottom button span{font-size:20px;line-height:1}
+nav.bottom button[aria-selected=true]{color:var(--accent)}
+main{padding-block:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:600;text-decoration:none;color:var(--ink);cursor:pointer;min-height:44px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--bad)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5}
+input[type=text],input[type=url],input[type=number],input[type=password],input[type=search]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:16px}
+label{display:block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.field{margin-bottom:14px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:18px;margin:0 0 10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.seg{display:flex;gap:6px;margin:10px 0 12px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left}
+.row:first-child{border-top:0}
+.row:active{background:var(--accent-soft)}
+.row .main{flex:1;min-width:0}
+.row .id{font-family:var(--mono);font-weight:700}
+.row .num{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:6px}
+.row .sub{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.free{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;text-align:center;font-size:14px;font-variant-numeric:tabular-nums}
+.pager small{color:var(--muted)}
+.pager .btn{flex:0 0 auto}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.qrbox{background:#fff;border-radius:10px;padding:10px;width:min(220px,60vw);margin:0 auto 12px;line-height:0}
+.qrbox svg{width:100%;height:auto}
+.urlline{display:flex;gap:6px;align-items:center}
+.urlline code{flex:1;min-width:0;font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions .btn{flex:1 1 auto}
+.notice{border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+.notice.warn{background:var(--warn-soft);color:var(--warn)}
+.notice.bad{background:var(--bad-soft);color:var(--bad)}
+.notice.ok{background:var(--ok-soft);color:var(--ok)}
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet .panel{background:var(--surface);width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px max(16px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet .head{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.sheet .head h2{font-family:var(--mono);font-size:24px;margin:0;flex:1}
+.toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;max-width:calc(100% - 32px);text-align:center}
+.login{min-height:80vh;display:grid;align-content:center;gap:4px}
+.login .stars{font-size:28px;letter-spacing:6px;color:var(--star);text-align:center}
+.login h1{text-align:center;margin:0 0 12px;font-size:24px}
+.batch{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.batch div{border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center;font-family:var(--mono);font-size:12px;font-weight:700}
+.batch .qrbox{width:100%;padding:3px;margin-bottom:4px}
+ol.steps{padding-left:20px;margin:0}
+ol.steps li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(function(){
+"use strict";
+var OWNER="juniorbispo92-hash", REPO="placas-2", BRANCH="main";
+var BASE="https://neovibeavalie.com.br/";
+var ALPH="23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+var PRODUCTMATE="https://productmate.com/google-review-link-generator";
+var PAGE=50;
+
+var S=null, byId=new Map(), token="", busy=false;
+var access=null, accessChecked=false; /* acesso.json: token trancado com usuário e senha */
+var ui={tab:"placas",q:"",filter:"all",page:0,mode:"login",pass:false,open:null,lastBatch:[],error:""};
+try{token=localStorage.getItem("gh-token")||"";ui.lastBatch=JSON.parse(localStorage.getItem("last-batch")||"[]")}catch(e){}
+var root=document.getElementById("root");
+
+/* ---------- utilidades ---------- */
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function pad(n){return String(n).padStart(4,"0")}
+function now(){return Date.now()}
+function fmt(t){if(!t)return"—";var d=new Date(t);return d.toLocaleDateString("pt-BR")+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}
+function plateUrl(id){return BASE+"?p="+id}
+function extractId(q){q=String(q||"").trim();var m=q.match(/[?&]p=([A-Za-z0-9]+)/);if(m)q=m[1];var i=q.lastIndexOf("#");if(i>=0)q=q.slice(i+1);return q.toUpperCase().replace(/[^A-Z0-9]/g,"")}
+function newId(){var id;do{id="";var a=new Uint32Array(6);crypto.getRandomValues(a);for(var i=0;i<6;i++)id+=ALPH[a[i]%ALPH.length]}while(byId.has(id));return id}
+function qr(text){var q=qrcode(0,"M");q.addData(text);q.make();return q}
+function qrSvg(text,cell){return window.qrcode?qr(text).createSvgTag(cell||4,2):""}
+function checkDest(u){
+  u=String(u||"").trim();if(!u)return{ok:true,empty:true};
+  var x;try{x=new URL(u)}catch(e){return{ok:false,msg:"Isto não é um link válido. Cole o link completo, começando por https://"}}
+  if(x.protocol!=="https:")return{ok:false,msg:"O link precisa começar por https://"};
+  var h=x.hostname.toLowerCase();
+  var g=/(^|\.)google\.[a-z.]+$/.test(h)||/^(g\.page|maps\.app\.goo\.gl|goo\.gl|g\.co)$/.test(h);
+  return{ok:true,url:x.href,google:g};
+}
+var toastT;function toast(m){var t=document.querySelector(".toast");if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},3000)}
+function index(){byId=new Map();S.plates.forEach(function(p){byId.set(p.id,p)})}
+function b64enc(str){var bytes=new TextEncoder().encode(str),bin="";for(var i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(bin)}
+function b64dec(b){var bin=atob(b.replace(/\s/g,"")),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
+function download(name,data,type){var a=document.createElement("a");a.href=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type:type||"text/plain"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500)}
+
+/* ---------- acesso com usuário e senha ---------- */
+function bytesToB64(u){var t="";for(var i=0;i<u.length;i++)t+=String.fromCharCode(u[i]);return btoa(t)}
+function b64ToBytes(b){var t=atob(b),u=new Uint8Array(t.length);for(var i=0;i<t.length;i++)u[i]=t.charCodeAt(i);return u}
+function normUser(u){return String(u||"").trim().toLowerCase()}
+function deriveKey(user,pass,salt,iter){
+  return crypto.subtle.importKey("raw",new TextEncoder().encode(normUser(user)+"\n"+pass),"PBKDF2",false,["deriveKey"]).then(function(k){
+    return crypto.subtle.deriveKey({name:"PBKDF2",salt:salt,iterations:iter,hash:"SHA-256"},k,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+  });
+}
+function lockToken(user,pass,tok){
+  var salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=310000;
+  return deriveKey(user,pass,salt,iter).then(function(k){return crypto.subtle.encrypt({name:"AES-GCM",iv:iv},k,new TextEncoder().encode(tok))})
+    .then(function(ct){return JSON.stringify({v:1,iter:iter,salt:bytesToB64(salt),iv:bytesToB64(iv),data:bytesToB64(new Uint8Array(ct))})});
+}
+function unlockToken(user,pass,acc){
+  return deriveKey(user,pass,b64ToBytes(acc.salt),acc.iter||310000)
+    .then(function(k){return crypto.subtle.decrypt({name:"AES-GCM",iv:b64ToBytes(acc.iv)},k,b64ToBytes(acc.data))})
+    .then(function(pt){return new TextDecoder().decode(pt)},function(){throw{badPass:true}});
+}
+function fetchAccess(){
+  return fetch("acesso.json?t="+now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})
+    .then(function(a){access=a&&a.data?a:null;accessChecked=true;return access});
+}
+function saveAccess(user,pass){
+  return lockToken(user,pass,token).then(function(txt){
+    return getFile("app/acesso.json").then(function(f){return putFile("app/acesso.json",txt,f.sha,"Atualizar acesso do app")}).then(function(){access=JSON.parse(txt)});
+  });
+}
+function checkNewPass(user,p1,p2){
+  if(normUser(user).length<3)return"O usuário precisa ter pelo menos 3 letras.";
+  if(String(p1).length<8)return"A senha precisa ter pelo menos 8 caracteres.";
+  if(p1!==p2)return"As duas senhas não são iguais.";
+  return"";
+}
+
+/* ---------- GitHub ---------- */
+function api(path,opt){
+  opt=opt||{};
+  return fetch("https://api.github.com/repos/"+OWNER+"/"+REPO+"/contents/"+path+(opt.method?"":"?ref="+BRANCH+"&t="+now()),{
+    method:opt.method||"GET",cache:"no-store",
+    headers:{"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},
+    body:opt.body?JSON.stringify(opt.body):undefined
+  }).then(function(r){
+    if(r.status===404&&!opt.method)return null;
+    if(!r.ok){var e=new Error("gh "+r.status);e.status=r.status;throw e}
+    return r.json();
+  });
+}
+function getFile(path){
+  return api(path).then(function(j){
+    if(!j)return{sha:null,text:null};
+    if(j.content)return{sha:j.sha,text:b64dec(j.content)};
+    return fetch(j.download_url+"?t="+now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){return{sha:j.sha,text:t}});
+  });
+}
+function putFile(path,text,sha,msg){
+  var body={message:msg,content:b64enc(text),branch:BRANCH};if(sha)body.sha=sha;
+  return api(path,{method:"PUT",body:body});
+}
+function load(){
+  return getFile("dados.json").then(function(f){
+    if(!f.text){S={v:1,base:BASE,seq:0,plates:[]}}else S=JSON.parse(f.text);
+    S.plates=S.plates||[];S.seq=S.seq||0;index();
+  });
+}
+function linksJson(){var m={};S.plates.forEach(function(p){if(p.dest)m[p.id]=p.dest});return JSON.stringify(m,null,1)}
+/* Aplica uma alteração sobre a versão mais recente e grava dados.json + placas.json */
+function commit(op,msg,attempt){
+  attempt=attempt||0;busy=true;render();
+  var dados;
+  return getFile("dados.json").then(function(f){
+    dados=f;S=f.text?JSON.parse(f.text):{v:1,base:BASE,seq:0,plates:[]};S.plates=S.plates||[];S.seq=S.seq||0;index();
+    var r=op();
+    S.saved=now();
+    return putFile("dados.json",JSON.stringify(S),f.sha,msg).then(function(){
+      return getFile("placas.json");
+    }).then(function(pf){
+      var next=linksJson();
+      if(pf.text&&pf.text.trim()===next.trim())return r;
+      return putFile("placas.json",next,pf.sha,msg).then(function(){return r});
+    });
+  }).then(function(r){busy=false;render();return r},function(e){
+    busy=false;
+    if((e.status===409||e.status===422)&&attempt<2)return commit(op,msg,attempt+1);
+    if(e.status===401||e.status===403){ui.error="O token do GitHub foi recusado. Confira-o em Ajustes.";}
+    else ui.error="Não foi possível salvar. Verifique a internet e tente de novo.";
+    render();throw e;
+  });
+}
+
+/* ---------- ações ---------- */
+function saveLink(id,client,dest,note){
+  var d=checkDest(dest);if(!d.ok)return Promise.reject({msg:d.msg});
+  return commit(function(){
+    var p=byId.get(id);if(!p)throw{msg:"Placa não encontrada."};
+    var nd=d.empty?"":d.url;
+    if(p.dest&&p.dest!==nd)p.hist=(p.hist||[]).concat([{d:p.dest,t:now()}]).slice(-5);
+    p.dest=nd;p.client=String(client||"").trim();p.note=String(note||"").trim();p.u=now();
+    return d;
+  },"Placa "+id+": "+(d.empty?"link removido":"link atualizado"));
+}
+function generate(qty,label){
+  qty=Math.max(1,Math.min(500,parseInt(qty,10)||0));
+  return commit(function(){
+    var out=[];for(var i=0;i<qty;i++){var p={id:newId(),n:++S.seq,c:now(),u:now(),batch:label||""};S.plates.push(p);byId.set(p.id,p);out.push(p.id)}
+    return out;
+  },"Gerar "+qty+" placas"+(label?" ("+label+")":""));
+}
+function sheetHtml(list,title){
+  var items=list.map(function(p){return '<div class="l">'+qr(plateUrl(p.id)).createSvgTag(4,2)+'<b>'+p.id+'</b><span>Nº '+pad(p.n)+'</span></div>'}).join("");
+  return '<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><style>@page{size:A4;margin:10mm}body{font-family:Menlo,monospace;margin:0}h1{font:600 14px sans-serif;margin:0 0 6mm}.g{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}.l{border:1px dashed #bbb;padding:3mm;text-align:center;break-inside:avoid}.l svg{width:100%;height:auto}.l b{display:block;font-size:13pt;margin-top:1mm}.l span{font-size:8pt;color:#555}</style></head><body><h1>'+esc(title)+' · '+list.length+' placas</h1><div class="g">'+items+'</div></body></html>';
+}
+function csv(list){
+  var h=["id","numero","link_qr_nfc","cliente","link_google","nota"];
+  var rows=list.map(function(p){return[p.id,pad(p.n),plateUrl(p.id),p.client||"",p.dest||"",p.note||""]});
+  return "﻿"+[h].concat(rows).map(function(r){return r.map(function(v){v=String(v);return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(";")}).join("\n");
+}
+function pngBlob(p){
+  var q=qr(plateUrl(p.id)),n=q.getModuleCount(),cell=16,m=4,w=(n+m*2)*cell,lab=90;
+  var c=document.createElement("canvas");c.width=w;c.height=w+lab;var x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#000";
+  for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+m)*cell,(r+m)*cell,cell,cell);
+  x.textAlign="center";x.font="700 44px monospace";x.fillText(p.id,w/2,w+20);
+  x.font="28px sans-serif";x.fillStyle="#555";x.fillText("Nº "+pad(p.n),w/2,w+64);
+  return new Promise(function(res){c.toBlob(res,"image/png")});
+}
+function writeNfc(url){
+  if(!("NDEFReader" in window)){toast("Gravar NFC funciona no Chrome do Android. Copie o link e use um app como o NFC Tools.");return}
+  var r=new NDEFReader();toast("Aproxime o chip NFC do celular…");
+  r.write({records:[{recordType:"url",data:url}]}).then(function(){toast("Chip NFC gravado ✔")},function(e){toast("Não gravou: "+(e&&e.message||"tente de novo"))});
+}
+
+/* ---------- vistas ---------- */
+function passFields(){
+  return '<div class="field"><label for="nu">Usuário</label><input type="text" id="nu" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ex.: marcos" required></div>'
+   +'<div class="field"><label for="np">Senha</label><input type="password" id="np" autocomplete="new-password" placeholder="Mínimo 8 caracteres" required></div>'
+   +'<div class="field"><label for="np2">Repita a senha</label><input type="password" id="np2" autocomplete="new-password" required></div>';
+}
+function loginView(){
+  var head='<div class="wrap login"><div class="stars" aria-hidden="true">★★★★★</div><h1>Placas NeoVibe</h1>';
+  var err=ui.error?'<div class="notice bad">'+esc(ui.error)+'</div>':'';
+  var btn=function(t){return '<button class="btn primary block"'+(busy?' disabled':'')+'>'+(busy?'Aguarde…':t)+'</button>'};
+  if(!accessChecked)return head+'<p class="hint" style="text-align:center">Carregando…</p></div>';
+  if(access&&ui.mode==="login"){
+    return head+'<div class="card"><form id="login"><div class="field"><label for="lu">Usuário</label><input type="text" id="lu" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>'
+     +'<div class="field"><label for="lp">Senha</label><input type="password" id="lp" autocomplete="current-password" required></div>'+err+btn("Entrar")+'</form></div>'
+     +'<p style="text-align:center"><button class="btn" data-act="use-token">Esqueci a senha</button></p></div>';
+  }
+  var first=!access;
+  return head+'<div class="card"><h2>'+(first?'Primeiro acesso':'Criar nova senha')+'</h2><form id="setup">'
+   +'<p class="hint" style="margin-top:0">'+(first?'Cole uma única vez o token do GitHub e escolha seu usuário e senha. Depois, é só entrar com eles em qualquer celular.':'Cole um token do GitHub (pode ser o mesmo ou um novo) e escolha um novo usuário e senha.')+'</p>'
+   +'<div class="field"><label for="tk">Token do GitHub</label><input type="password" id="tk" autocomplete="off" placeholder="github_pat_…" required></div>'
+   +passFields()+err+btn(first?'Criar acesso e entrar':'Salvar e entrar')+'</form></div>'
+   +(access?'<p style="text-align:center"><button class="btn" data-act="use-login">Voltar ao login</button></p>':'')+'</div>';
+}
+function filtered(){
+  var q=ui.q.trim(),qi=extractId(q),ql=q.toLowerCase(),qn=q.replace(/\D/g,"");
+  return S.plates.filter(function(p){
+    if(ui.filter==="free"&&p.dest)return false;
+    if(ui.filter==="ok"&&!p.dest)return false;
+    if(!q)return true;
+    return (qi&&p.id.indexOf(qi)>=0)||(qn&&/^\d+$/.test(q)&&pad(p.n)===qn.padStart(4,"0"))||(p.client||"").toLowerCase().indexOf(ql)>=0;
+  }).sort(function(a,b){return a.n-b.n});
+}
+function chip(p){return p.dest?'<span class="chip ok">Ativa</span>':'<span class="chip free">Livre</span>'}
+function placasView(){
+  var tot=S.plates.length,ok=S.plates.filter(function(p){return p.dest}).length,list=filtered();
+  var h='<div class="stats"><div class="stat"><b>'+tot+'</b><span>Placas</span></div><div class="stat"><b>'+ok+'</b><span>Ativas</span></div><div class="stat"><b>'+(tot-ok)+'</b><span>Livres</span></div></div>'
+   +'<input type="search" id="q" value="'+esc(ui.q)+'" placeholder="Código, nº ou cliente" aria-label="Pesquisar placa">'
+   +'<div class="seg">'+[["all","Todas"],["ok","Ativas"],["free","Livres"]].map(function(f){return '<button data-filter="'+f[0]+'" aria-pressed="'+(ui.filter===f[0])+'">'+f[1]+'</button>'}).join("")+'</div>';
+  if(!tot)return h+'<div class="list"><div class="empty">Ainda não há placas. Toque em <b>Gerar</b> para criar o primeiro lote.</div></div>';
+  if(!list.length)return h+'<div class="list"><div class="empty">Nenhuma placa encontrada.</div></div>';
+  var pages=Math.max(1,Math.ceil(list.length/PAGE));if(ui.page>=pages)ui.page=pages-1;if(ui.page<0)ui.page=0;
+  var from=ui.page*PAGE,to=Math.min(list.length,from+PAGE);
+  var pager='<div class="pager"><button class="btn" data-act="prev"'+(ui.page?'':' disabled')+'>← Voltar</button><span>'+(from+1)+'–'+to+' de '+list.length+'<br><small>Página '+(ui.page+1)+' de '+pages+'</small></span><button class="btn" data-act="next"'+(ui.page<pages-1?'':' disabled')+'>Avançar →</button></div>';
+  if(pages>1)h+=pager;
+  h+='<div class="list">'+list.slice(from,to).map(function(p){
+    return '<button class="row" data-open="'+p.id+'"><div class="main"><div><span class="id">'+p.id+'</span><span class="num">Nº '+pad(p.n)+'</span></div><div class="sub">'+(p.client?esc(p.client):(p.dest?esc(p.dest):'Sem link'))+'</div></div>'+chip(p)+'</button>';
+  }).join("")+'</div>';
+  if(pages>1)h+=pager;
+  return h;
+}
+function gerarView(){
+  var h='<div class="card"><h2>Gerar placas novas</h2><form id="gen"><div class="field"><label for="g-qty">Quantidade</label><input type="number" id="g-qty" min="1" max="500" value="20" inputmode="numeric"></div><div class="field"><label for="g-label">Nome do lote (opcional)</label><input type="text" id="g-label" placeholder="Ex.: Gráfica novembro"></div><button class="btn primary block"'+(busy?' disabled':'')+'>Gerar e salvar</button></form><div class="hint">Cada placa recebe um código único. O link Google é colocado depois, ao entregar a placa.</div></div>';
+  var lb=ui.lastBatch.map(function(id){return byId.get(id)}).filter(Boolean);
+  if(lb.length){
+    h+='<div class="card"><h2>Último lote · '+lb.length+' placas</h2><div class="actions" style="margin-bottom:12px"><button class="btn" data-act="sheet">Folha para impressão</button><button class="btn" data-act="csv-batch">CSV do lote</button></div><div class="batch">'
+     +lb.slice(0,30).map(function(p){return '<div><div class="qrbox">'+qrSvg(plateUrl(p.id),2)+'</div>'+p.id+'</div>'}).join("")+'</div>'+(lb.length>30?'<p class="hint">+ '+(lb.length-30)+' na folha para impressão.</p>':'')+'</div>';
+  }
+  return h;
+}
+function ajustesView(){
+  var acc='<div class="card"><h2>Usuário e senha</h2>'
+   +(access?'<p class="hint" style="margin-top:0">O app já tem login com usuário e senha.</p>':'<div class="notice warn">Você ainda entra com o token. Crie um usuário e senha para entrar mais fácil em qualquer celular.</div>')
+   +(ui.pass?'<form id="passform">'+passFields()+(ui.error?'<div class="notice bad">'+esc(ui.error)+'</div>':'')+'<div class="actions"><button class="btn primary"'+(busy?' disabled':'')+'>'+(busy?'Salvando…':'Salvar')+'</button><button class="btn" type="button" data-act="pass-cancel">Cancelar</button></div></form>'
+     :'<button class="btn" data-act="pass-open">'+(access?'Trocar usuário e senha':'Criar usuário e senha')+'</button>')+'</div>';
+  return acc+'<div class="card"><h2>Conta do GitHub</h2><p class="hint" style="margin-top:0">Repositório: <b>'+OWNER+'/'+REPO+'</b><br>Domínio das placas: <b>'+BASE+'</b></p><div class="actions"><button class="btn" data-act="reload">Recarregar dados</button><button class="btn danger" data-act="logout">Sair deste celular</button></div></div>'
+   +'<div class="card"><h2>Exportar</h2><div class="actions"><button class="btn" data-act="csv">CSV de todas as placas</button></div></div>'
+   +'<div class="card"><h2>Como usar</h2><ol class="steps"><li><b>Gerar</b>: crie um lote e baixe a folha para impressão.</li><li>Grave o chip NFC de cada placa no painel dela (Android) ou com o NFC Tools.</li><li>Ao entregar, abra a placa, cole o link Google do cliente (use o botão ProductMate se precisar) e toque em <b>Salvar</b>.</li><li>Em 1 a 2 minutos o QR já leva direto à avaliação.</li></ol></div>';
+}
+function sheetView(p){
+  var url=plateUrl(p.id);
+  return '<div class="sheet" data-act="close-bg"><div class="panel" role="dialog" aria-label="Placa '+p.id+'">'
+   +'<div class="head"><h2>'+p.id+'</h2><span class="hint">Nº '+pad(p.n)+'</span>'+chip(p)+'</div>'
+   +'<div class="qrbox">'+qrSvg(url,5)+'</div>'
+   +'<div class="field"><label>Link do QR e do NFC (não muda)</label><div class="urlline"><code>'+esc(url)+'</code><button class="btn" data-act="copy" data-text="'+esc(url)+'">Copiar</button></div></div>'
+   +'<div class="actions" style="margin-bottom:16px"><button class="btn" data-act="nfc" data-text="'+esc(url)+'">Gravar NFC</button><button class="btn" data-act="png" data-id="'+p.id+'">Baixar QR</button></div>'
+   +'<form id="edit" data-id="'+p.id+'">'
+   +'<div class="field"><label for="f-client">Cliente</label><input type="text" id="f-client" value="'+esc(p.client||"")+'" placeholder="Ex.: Barbearia do Zé"></div>'
+   +'<div class="field"><label for="f-dest">Link de avaliação Google</label><input type="url" id="f-dest" value="'+esc(p.dest||"")+'" placeholder="https://search.google.com/local/writereview?placeid=…" inputmode="url"><div class="hint" id="dest-msg">Cole o link de avaliação do cliente.</div>'
+   +'<div class="actions" style="margin-top:8px"><a class="btn" href="'+PRODUCTMATE+'" target="_blank" rel="noopener">Gerar link (ProductMate)</a>'+(p.dest?'<a class="btn" href="'+esc(p.dest)+'" target="_blank" rel="noopener">Testar link</a>':'')+'</div></div>'
+   +'<div class="field"><label for="f-note">Nota interna</label><input type="text" id="f-note" value="'+esc(p.note||"")+'" placeholder="Ex.: entregue em 20/10"></div>'
+   +(ui.error?'<div class="notice bad">'+esc(ui.error)+'</div>':'')
+   +'<div class="actions"><button class="btn primary" type="submit"'+(busy?' disabled':'')+'>'+(busy?'Salvando…':'Salvar')+'</button><button class="btn" type="button" data-act="close">Fechar</button></div>'
+   +'<p class="hint">Criada '+fmt(p.c)+' · Atualizada '+fmt(p.u)+(p.batch?' · Lote: '+esc(p.batch):'')+'</p>'
+   +(p.hist&&p.hist.length?'<p class="hint">Links anteriores: '+p.hist.map(function(x){return esc(x.d)}).join(" · ")+'</p>':'')
+   +'</form></div></div>';
+}
+function render(){
+  var act=document.activeElement&&document.activeElement.id,pos=null;try{pos=document.activeElement.selectionStart}catch(e){}
+  var keep={},prevOpen=render.open,prevTab=render.tab;["f-client","f-dest","f-note","g-qty","g-label","tk","nu","lu"].forEach(function(k){var el=document.getElementById(k);if(el)keep[k]=el.value});
+  if(!token){root.innerHTML=loginView()}
+  else if(!S){root.innerHTML='<div class="wrap login"><div class="stars" aria-hidden="true">★★★★★</div><h1>Placas NeoVibe</h1>'+(busy?'<p class="hint" style="text-align:center">Carregando placas…</p>':'<div class="notice bad">'+esc(ui.error||"Não foi possível carregar.")+'</div><button class="btn primary block" data-act="retry">Tentar de novo</button>')+'</div>'}
+  else{
+    var body=ui.tab==="placas"?placasView():ui.tab==="gerar"?gerarView():ajustesView();
+    root.innerHTML='<header><div class="wrap"><div class="mark" aria-hidden="true">★</div><h1>Placas NeoVibe</h1><span class="sync">'+(busy?'Salvando…':'')+'</span></div></header>'
+     +'<main class="wrap">'+(ui.error&&!ui.open?'<div class="notice bad">'+esc(ui.error)+'</div>':'')+body+'</main>'
+     +'<nav class="bottom"><div class="wrap">'+[["placas","▤","Placas"],["gerar","＋","Gerar"],["ajustes","⚙","Ajustes"]].map(function(t){return '<button data-tab="'+t[0]+'" aria-selected="'+(ui.tab===t[0])+'"><span aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join("")+'</div></nav>'
+     +(ui.open&&byId.get(ui.open)?sheetView(byId.get(ui.open)):'');
+  }
+  Object.keys(keep).forEach(function(k){var el=document.getElementById(k);if(!el)return;if(k.charAt(0)==="f"?prevOpen===ui.open:prevTab===ui.tab)el.value=keep[k]});
+  render.open=ui.open;render.tab=ui.tab;
+  if(act){var el=document.getElementById(act);if(el){el.focus();try{if(pos!=null)el.setSelectionRange(pos,pos)}catch(e){}}}
+}
+
+/* ---------- eventos ---------- */
+root.addEventListener("click",function(e){
+  var t=e.target.closest("[data-act],[data-tab],[data-open],[data-filter]");if(!t)return;
+  if(t.dataset.tab){ui.tab=t.dataset.tab;ui.error="";render();window.scrollTo(0,0);return}
+  if(t.dataset.filter){ui.filter=t.dataset.filter;ui.page=0;render();return}
+  if(t.dataset.open){ui.open=t.dataset.open;ui.error="";render();return}
+  var a=t.dataset.act;
+  if(a==="close-bg"&&e.target!==t)return;
+  if(a==="close"||a==="close-bg"){ui.open=null;ui.error="";render()}
+  else if(a==="prev"||a==="next"){ui.page+=a==="next"?1:-1;render();window.scrollTo(0,0)}
+  else if(a==="copy"){var tx=t.dataset.text;(navigator.clipboard?navigator.clipboard.writeText(tx):Promise.reject()).then(function(){toast("Link copiado")},function(){toast("Segure o link para copiar")})}
+  else if(a==="nfc")writeNfc(t.dataset.text);
+  else if(a==="png"){var p=byId.get(t.dataset.id);pngBlob(p).then(function(b){download("placa-"+p.id+".png",b)})}
+  else if(a==="sheet"){var lb=ui.lastBatch.map(function(i){return byId.get(i)}).filter(Boolean);var html=sheetHtml(lb,"Placas NeoVibe "+pad(lb[0].n)+"–"+pad(lb[lb.length-1].n));var w=window.open(URL.createObjectURL(new Blob([html],{type:"text/html"})),"_blank");if(!w)download("folha-placas.html",html,"text/html")}
+  else if(a==="csv-batch")download("lote-placas.csv",csv(ui.lastBatch.map(function(i){return byId.get(i)}).filter(Boolean)),"text/csv");
+  else if(a==="csv")download("placas-neovibe.csv",csv(S.plates.slice().sort(function(x,y){return x.n-y.n})),"text/csv");
+  else if(a==="reload"){busy=true;render();load().then(function(){busy=false;ui.error="";render();toast("Dados atualizados")},function(){busy=false;ui.error="Não foi possível carregar os dados.";render()})}
+  else if(a==="retry")start();
+  else if(a==="logout"){try{localStorage.removeItem("gh-token")}catch(e){}token="";S=null;ui.error="";ui.mode="login";ui.pass=false;accessChecked=false;render();fetchAccess().then(render)}
+  else if(a==="use-token"){ui.mode="setup";ui.error="";render()}
+  else if(a==="use-login"){ui.mode="login";ui.error="";render()}
+  else if(a==="pass-open"){ui.pass=true;ui.error="";render()}
+  else if(a==="pass-cancel"){ui.pass=false;ui.error="";render()}
+});
+root.addEventListener("input",function(e){
+  if(e.target.id==="q"){ui.q=e.target.value;ui.page=0;render()}
+  if(e.target.id==="f-dest"){var d=checkDest(e.target.value),m=document.getElementById("dest-msg");m.textContent=!d.ok?d.msg:d.empty?"Sem link: a placa mostrará “ainda não ativada”.":d.google?"Link Google reconhecido ✔":"Atenção: este link não parece ser do Google."}
+});
+root.addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target;
+  if(f.id==="login"){
+    var lu=document.getElementById("lu").value,lp=document.getElementById("lp").value;
+    busy=true;ui.error="";render();
+    unlockToken(lu,lp,access).then(function(tk){token=tk;return load()}).then(function(){try{localStorage.setItem("gh-token",token)}catch(x){}busy=false;render()},function(err){
+      busy=false;token="";S=null;
+      ui.error=err&&err.badPass?"Usuário ou senha incorretos.":(err&&(err.status===401||err.status===403))?"O token guardado no app expirou ou foi apagado no GitHub. Toque em “Esqueci a senha” e use um token novo.":"Não foi possível conectar ao GitHub. Verifique a internet.";
+      render();var el=document.getElementById("lu");if(el)el.value=lu;});
+  }else if(f.id==="setup"){
+    var tk=document.getElementById("tk").value.trim(),nu=document.getElementById("nu").value,np=document.getElementById("np").value,np2=document.getElementById("np2").value;
+    var bad=checkNewPass(nu,np,np2);if(bad){ui.error=bad;render();document.getElementById("tk").value=tk;document.getElementById("nu").value=nu;return}
+    token=tk;busy=true;ui.error="";render();
+    load().then(function(){return saveAccess(nu,np)}).then(function(){try{localStorage.setItem("gh-token",token)}catch(x){}busy=false;ui.mode="login";render();toast("Acesso criado ✔ Da próxima vez entre com usuário e senha.")},function(err){
+      busy=false;var auth=err&&(err.status===401||err.status===403);if(auth||!S){token="";S=null}
+      ui.error=auth?"Token recusado. Confira se copiou inteiro e se tem permissão de escrita (Contents) no repositório "+REPO+".":"Não foi possível salvar o acesso. Verifique a internet e tente de novo.";render()});
+  }else if(f.id==="passform"){
+    var u2=document.getElementById("nu").value,p1=document.getElementById("np").value,p2=document.getElementById("np2").value;
+    var bad2=checkNewPass(u2,p1,p2);if(bad2){ui.error=bad2;render();document.getElementById("nu").value=u2;return}
+    busy=true;ui.error="";render();
+    saveAccess(u2,p1).then(function(){busy=false;ui.pass=false;render();toast("Usuário e senha salvos ✔ Valem em 1–2 minutos em outros celulares.")},function(err){busy=false;ui.error=(err&&(err.status===401||err.status===403))?"O GitHub recusou o token. Saia e entre de novo com um token novo.":"Não foi possível salvar. Verifique a internet.";render()});
+  }else if(f.id==="edit"){
+    ui.error="";
+    saveLink(f.dataset.id,document.getElementById("f-client").value,document.getElementById("f-dest").value,document.getElementById("f-note").value)
+      .then(function(d){ui.open=null;render();toast(d&&d.empty?"Link removido. Em 1–2 min a placa fica livre.":"Salvo ✔ Em 1–2 min o QR já leva à avaliação.")},function(err){if(err&&err.msg){var m=document.getElementById("dest-msg");if(m){m.textContent=err.msg;m.style.color="var(--bad)"}}});
+  }else if(f.id==="gen"){
+    var qty=document.getElementById("g-qty").value,label=document.getElementById("g-label").value;
+    generate(qty,label).then(function(ids){ui.lastBatch=ids;try{localStorage.setItem("last-batch",JSON.stringify(ids))}catch(x){}render();toast(ids.length+" placas geradas e salvas")},function(){});
+  }
+});
+
+/* ---------- arranque ---------- */
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(function(){});
+function start(){busy=true;ui.error="";render();load().then(function(){busy=false;render()},function(err){busy=false;S=null;if(err&&(err.status===401||err.status===403)){token="";try{localStorage.removeItem("gh-token")}catch(x){}ui.error="O token salvo foi recusado. Entre de novo."}else ui.error="Sem conexão com o GitHub. Verifique a internet.";render()})}
+if(token){start();fetchAccess().then(function(){if(ui.tab==="ajustes")render()})}
+else{render();fetchAccess().then(function(a){ui.mode=a?"login":"setup";render()})}
+})();
+</script>
+</body>
+</html>
