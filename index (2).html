@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Avaliação Google</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#151a22;background:#f3f4f6;padding:24px 16px;box-sizing:border-box}
+main{max-width:380px;text-align:center;display:grid;gap:12px}
+.stars{font-size:28px;letter-spacing:6px;color:#f2a900}
+h1{margin:0;font-size:22px}
+p{margin:0;color:#5d6675}
+.code{font:13px ui-monospace,Menlo,monospace;color:#5d6675}
+</style>
+</head>
+<body>
+<main>
+  <div class="stars" aria-hidden="true">★★★★★</div>
+  <h1 id="t">Abrindo a avaliação…</h1>
+  <p id="m"></p>
+  <div class="code" id="c"></div>
+</main>
+<script>
+var id = (new URLSearchParams(location.search).get("p") || location.hash.replace(/^#/, "")).toUpperCase().replace(/[^A-Z0-9]/g, "");
+function show(t, m){ document.getElementById("t").textContent = t; document.getElementById("m").textContent = m; }
+if (id) document.getElementById("c").textContent = "Placa " + id;
+if (!id) show("Placa sem código", "Leia de novo o QR Code ou aproxime o celular da placa.");
+else fetch("placas.json?t=" + Date.now(), {cache: "no-store"})
+  .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+  .then(function(m){
+    var d = m[id];
+    if (d && /^https:\/\//i.test(d)) location.replace(d);
+    else show("Placa ainda não ativada", "Esta placa ainda não foi ligada a nenhum negócio.");
+  })
+  .catch(function(){ show("Não foi possível abrir agora", "Verifique a internet e tente de novo em instantes."); });
+</script>
+</body>
+</html>
