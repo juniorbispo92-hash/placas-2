@@ -450,6 +450,12 @@ tr:hover td { background: rgba(0,0,0,0.02); }
               Só placas livres (sem cliente)
             </label>
           </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+            <button class="btn btn-secondary" onclick="visualizarQRs()" id="btnVisualizar" style="flex:1;justify-content:center;padding:11px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Visualizar QR Codes
+            </button>
+          </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="baixarPDF()" id="btnPDF" style="flex:1;justify-content:center;padding:11px;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -463,8 +469,19 @@ tr:hover td { background: rgba(0,0,0,0.02); }
           <div class="form-hint" style="margin-top:10px;">O PDF vem em folhas A4, 20 placas por folha, com linhas para recorte. O ZIP traz uma imagem por placa, ideal para enviar à gráfica.</div>
         </div>
 
-        <!-- QR preview oculto -->
+        <!-- QR preview oculto (geração interna) -->
         <div id="qrPreviewArea" style="position:absolute;left:-9999px;top:0;"></div>
+
+        <!-- Prévia dos QR codes na tela -->
+        <div id="qrPreviewSection" hidden>
+          <div class="settings-section" style="margin-top:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <h3 style="margin-bottom:0;" id="qrPreviewTitle">Prévia dos QR Codes</h3>
+              <button class="btn btn-secondary btn-sm" onclick="fecharPrevia()">Fechar</button>
+            </div>
+            <div id="qrPreviewGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;"></div>
+          </div>
+        </div>
       </div>
 
       <!-- CLIENTES -->
@@ -632,6 +649,7 @@ tr:hover td { background: rgba(0,0,0,0.02); }
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 // ============================================================
 // CONFIG SUPABASE
@@ -1050,6 +1068,59 @@ async function gerarQRDataURLs(lista) {
   return results;
 }
 
+async function visualizarQRs() {
+  const lista = getQRPlacas();
+  if (!lista.length) return showToast('Nenhuma placa no intervalo selecionado.');
+  if (lista.length > 100) return showToast('Máximo 100 para visualizar. Ajuste o intervalo.');
+  const btn = document.getElementById('btnVisualizar');
+  btn.textContent = 'Carregando...'; btn.disabled = true;
+  const grid = document.getElementById('qrPreviewGrid');
+  const section = document.getElementById('qrPreviewSection');
+  grid.innerHTML = '';
+  section.hidden = false;
+  document.getElementById('qrPreviewTitle').textContent = 'Prévia — ' + lista.length + ' QR Code' + (lista.length !== 1 ? 's' : '');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const area = document.getElementById('qrPreviewArea');
+  area.innerHTML = '';
+
+  for (const p of lista) {
+    const div = document.createElement('div');
+    area.appendChild(div);
+    await new Promise(resolve => {
+      new QRCode(div, {
+        text: BASE_URL + p.codigo,
+        width: 160, height: 160,
+        colorDark: '#000000', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      setTimeout(resolve, 50);
+    });
+    const qrEl = div.querySelector('canvas') || div.querySelector('img');
+    let src = '';
+    if (qrEl?.tagName === 'CANVAS') src = qrEl.toDataURL('image/png');
+    else if (qrEl?.tagName === 'IMG') src = qrEl.src;
+
+    const card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;';
+    card.innerHTML = `
+      <img src="${src}" style="width:100%;max-width:120px;height:auto;border-radius:6px;display:block;margin:0 auto 6px;">
+      <div style="font-family:monospace;font-size:12px;font-weight:700;color:var(--fg);letter-spacing:1px;">${p.codigo}</div>
+      <div style="font-size:11px;color:var(--fg-muted);">Nº ${String(p.num).padStart(4,'0')}</div>
+      <a href="${src}" download="qr_${p.codigo}.png" style="display:inline-block;margin-top:6px;font-size:11px;color:var(--accent);text-decoration:none;">⬇ PNG</a>
+    `;
+    grid.appendChild(card);
+    div.remove();
+  }
+  area.innerHTML = '';
+  btn.textContent = 'Visualizar QR Codes'; btn.disabled = false;
+}
+
+function fecharPrevia() {
+  document.getElementById('qrPreviewSection').hidden = true;
+  document.getElementById('qrPreviewGrid').innerHTML = '';
+}
+
 async function baixarPDF() {
   const lista = getQRPlacas();
   if (!lista.length) return showToast('Nenhuma placa no intervalo selecionado.');
@@ -1102,30 +1173,91 @@ async function baixarPDF() {
 async function baixarZIP() {
   const lista = getQRPlacas();
   if (!lista.length) return showToast('Nenhuma placa no intervalo selecionado.');
-  if (lista.length > 200) return showToast('Máximo 200 imagens por vez. Use os filtros.');
+  if (lista.length > 300) return showToast('Máximo 300 imagens por vez. Ajuste o intervalo.');
   const btn = document.getElementById('btnZIP');
   btn.textContent = 'Gerando...'; btn.disabled = true;
-  showLoading('Gerando imagens...', 'Criando ' + lista.length + ' QR codes...');
+  showLoading('Gerando ZIP...', 'Criando ' + lista.length + ' QR codes...');
   try {
-    const qrs = await gerarQRDataURLs(lista);
-    // Criar ZIP simples via download múltiplo (sem lib externa)
-    // Gera um HTML com link de download para cada imagem
-    let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Download QR Codes</title>
-    <style>body{font-family:Arial;padding:20px;} .grid{display:grid;grid-template-columns:repeat(auto-fill,120px);gap:12px;} .item{text-align:center;border:1px solid #eee;padding:8px;border-radius:8px;} .item img{width:100px;height:100px;} .code{font-size:11px;font-weight:bold;font-family:monospace;margin-top:4px;} a{display:block;font-size:11px;margin-top:4px;color:#2563eb;}</style>
-    </head><body><h2>QR Codes NeoVibe (${qrs.length})</h2><div class="grid">`;
-    for (const { p, dataUrl } of qrs) {
-      html += `<div class="item"><img src="${dataUrl}"><div class="code">${p.codigo}</div><a href="${dataUrl}" download="qr_${p.codigo}.png">Baixar</a></div>`;
+    const zip = new JSZip();
+    const area = document.getElementById('qrPreviewArea');
+    area.innerHTML = '';
+
+    for (let i = 0; i < lista.length; i++) {
+      const p = lista[i];
+      document.getElementById('loadingMsg').textContent = `Gerando ${i+1} de ${lista.length}...`;
+
+      // Gerar QR numa canvas com código embaixo
+      const canvas = document.createElement('canvas');
+      const SIZE = 300;
+      const FOOTER = 48;
+      canvas.width = SIZE;
+      canvas.height = SIZE + FOOTER;
+      const ctx = canvas.getContext('2d');
+
+      // Fundo branco
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, SIZE, SIZE + FOOTER);
+
+      // Gerar QR
+      const div = document.createElement('div');
+      area.appendChild(div);
+      await new Promise(resolve => {
+        new QRCode(div, {
+          text: BASE_URL + p.codigo,
+          width: SIZE, height: SIZE,
+          colorDark: '#000000', colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+        setTimeout(resolve, 60);
+      });
+
+      // Desenhar QR no canvas
+      const qrImg = div.querySelector('canvas') || div.querySelector('img');
+      if (qrImg) {
+        if (qrImg.tagName === 'CANVAS') {
+          ctx.drawImage(qrImg, 0, 0, SIZE, SIZE);
+        } else {
+          await new Promise(res => {
+            const img = new Image();
+            img.onload = () => { ctx.drawImage(img, 0, 0, SIZE, SIZE); res(); };
+            img.src = qrImg.src;
+          });
+        }
+      }
+
+      // Texto: código
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 22px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.codigo, SIZE / 2, SIZE + 30);
+
+      // Número da placa menor
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#555555';
+      ctx.fillText('Nº ' + String(p.num).padStart(4, '0'), SIZE / 2, SIZE + 46);
+
+      // Converter para PNG e adicionar no ZIP
+      const dataUrl = canvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+      zip.file(`qr_${p.codigo}.png`, base64, { base64: true });
+
+      div.remove();
     }
-    html += '</div></body></html>';
-    const blob = new Blob([html], { type: 'text/html' });
+
+    area.innerHTML = '';
+    document.getElementById('loadingMsg').textContent = 'Compactando ZIP...';
+
+    const blob = await zip.generateAsync({ type: 'blob' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'qrcodes-neovibe-imgs.html';
+    a.href = url;
+    a.download = 'qrcodes-neovibe.zip';
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Arquivo gerado! Abra e baixe cada imagem.');
+    showToast(lista.length + ' imagens baixadas no ZIP!');
   } catch(e) {
     showToast('Erro: ' + e.message);
+    console.error(e);
   } finally {
     btn.textContent = 'Imagens PNG (ZIP)'; btn.disabled = false;
     hideLoading();
