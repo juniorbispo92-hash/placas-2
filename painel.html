@@ -626,8 +626,13 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         <input type="text" id="editPlacaNome" class="form-input" placeholder="Ex: Padaria do João">
       </div>
       <div class="form-group">
-        <label class="form-label">Link do Google Review</label>
-        <input type="url" id="editPlacaLink" class="form-input" placeholder="https://search.google.com/local/writereview?...">
+        <label class="form-label">LINK DE AVALIAÇÃO GOOGLE</label>
+        <input type="url" id="editPlacaLink" class="form-input" placeholder="https://search.google.com/local/writereview?placeid=..." style="margin-bottom:8px;">
+        <div class="form-hint" style="margin-bottom:8px;">Cole o link de avaliação do cliente.</div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="abrirProductMate()">Gerar link (ProductMate)</button>
+          <button type="button" class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="testarLink()">Testar link</button>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1339,6 +1344,19 @@ async function savePlaca() {
     renderView(currentView());
     showToast('Placa salva!');
   } catch(e) { showToast('Erro: ' + e.message); }
+}
+
+function abrirProductMate() {
+  const nome = document.getElementById('editPlacaNome').value.trim();
+  const query = nome ? encodeURIComponent(nome) : '';
+  const url = 'https://productmate.com/google-review-link-generator' + (query ? '?business=' + query : '');
+  window.open(url, '_blank');
+}
+
+function testarLink() {
+  const link = document.getElementById('editPlacaLink').value.trim();
+  if (!link) return showToast('Cole um link primeiro.');
+  window.open(link, '_blank');
 }
 
 async function saveEditPlaca() {
