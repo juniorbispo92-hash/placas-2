@@ -880,14 +880,7 @@ async function doLogin() {
     lsSet('gn_user', currentUser);
     enterApp();
   } catch (e) {
-    // fallback demo mode
-    if (email && pass.length >= 6) {
-      currentUser = { id: 'local_' + Date.now(), email, name: email.split('@')[0], access_token: null };
-      lsSet('gn_user', currentUser);
-      enterApp();
-    } else {
-      showAuthError(e.message);
-    }
+    showAuthError('Email ou senha incorretos. Tente novamente.');
   }
 }
 
