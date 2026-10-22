@@ -1,9 +1,11 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestão NFC</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
-
 <style>
-/* Layout: app shell — sidebar + main panel, stacks to single column on mobile */
 :root {
   --bg: #f7f8fa;
   --surface: #ffffff;
@@ -27,217 +29,76 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --sidebar-bg: #020617;
-    --sidebar-text: #64748b;
-    --sidebar-active: #ffffff;
-    --sidebar-active-bg: #1d4ed8;
-    --fg: #f1f5f9;
-    --fg-muted: #94a3b8;
-    --border: #334155;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --success: #22c55e;
-    --success-bg: #14532d;
-    --warning: #f59e0b;
-    --warning-bg: #451a03;
-    --danger: #ef4444;
-    --danger-bg: #450a0a;
-    --input-bg: #0f172a;
-    color-scheme: dark;
+    --bg: #0f172a; --surface: #1e293b; --sidebar-bg: #020617;
+    --sidebar-text: #64748b; --fg: #f1f5f9; --fg-muted: #94a3b8;
+    --border: #334155; --accent: #3b82f6; --accent-hover: #2563eb;
+    --success: #22c55e; --success-bg: #14532d;
+    --warning: #f59e0b; --warning-bg: #451a03;
+    --danger: #ef4444; --danger-bg: #450a0a;
+    --input-bg: #0f172a; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --sidebar-bg: #020617;
-  --sidebar-text: #64748b;
-  --sidebar-active: #ffffff;
-  --sidebar-active-bg: #1d4ed8;
-  --fg: #f1f5f9;
-  --fg-muted: #94a3b8;
-  --border: #334155;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --success: #22c55e;
-  --success-bg: #14532d;
-  --warning: #f59e0b;
-  --warning-bg: #451a03;
-  --danger: #ef4444;
-  --danger-bg: #450a0a;
-  --input-bg: #0f172a;
-  color-scheme: dark;
+  --bg: #0f172a; --surface: #1e293b; --sidebar-bg: #020617;
+  --sidebar-text: #64748b; --fg: #f1f5f9; --fg-muted: #94a3b8;
+  --border: #334155; --accent: #3b82f6; --accent-hover: #2563eb;
+  --success: #22c55e; --success-bg: #14532d;
+  --warning: #f59e0b; --warning-bg: #451a03;
+  --danger: #ef4444; --danger-bg: #450a0a;
+  --input-bg: #0f172a; color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--fg); }
 
-.app {
-  display: none;
-  height: 100%;
-  min-height: 100%;
-}
-.app:not([hidden]) {
-  display: flex;
-}
+.app { display: none; height: 100%; min-height: 100%; }
+.app:not([hidden]) { display: flex; }
 
 /* SIDEBAR */
 .sidebar {
-  width: 240px;
-  min-width: 240px;
-  background: var(--sidebar-bg);
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  overflow-y: auto;
-  transition: transform 0.25s;
-  z-index: 50;
+  width: 240px; min-width: 240px; background: var(--sidebar-bg);
+  display: flex; flex-direction: column; overflow-y: auto;
+  transition: transform 0.25s; z-index: 50;
 }
-.sidebar-logo {
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.sidebar-logo h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.3px;
-}
-.sidebar-logo span {
-  display: block;
-  font-size: 11px;
-  color: var(--sidebar-text);
-  margin-top: 2px;
-}
-.sidebar-section {
-  padding: 16px 12px 8px;
-}
-.sidebar-section-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #475569;
-  padding: 0 8px;
-  margin-bottom: 4px;
-}
+.sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.sidebar-logo h1 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+.sidebar-logo span { display: block; font-size: 11px; color: var(--sidebar-text); margin-top: 2px; }
+.sidebar-section { padding: 16px 12px 8px; }
+.sidebar-section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; padding: 0 8px; margin-bottom: 4px; }
 .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--sidebar-text);
-  transition: background 0.15s, color 0.15s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
+  display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+  cursor: pointer; font-size: 13.5px; font-weight: 500; color: var(--sidebar-text);
+  transition: background 0.15s, color 0.15s; border: none; background: none; width: 100%; text-align: left;
 }
 .nav-item:hover { background: rgba(255,255,255,0.05); color: #cbd5e1; }
 .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); }
 .nav-item svg { flex-shrink: 0; opacity: 0.8; }
 .nav-item.active svg { opacity: 1; }
-
-.sidebar-user {
-  margin-top: auto;
-  padding: 12px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.user-avatar {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; color: #fff;
-  flex-shrink: 0;
-}
+.sidebar-user { margin-top: auto; padding: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+.user-info { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
 .user-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
 .user-role { font-size: 11px; color: var(--sidebar-text); }
 
 /* MAIN */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
-}
-
-.topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-shrink: 0;
-}
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; }
 .topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: var(--fg); }
 .topbar-actions { display: flex; gap: 10px; align-items: center; }
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: max(24px, env(safe-area-inset-right, 0px));
-}
-
-/* VIEWS */
+.content { flex: 1; overflow-y: auto; padding: 24px; }
 .view { display: none; }
 .view.active { display: block; }
 
-/* STATS ROW */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: var(--card-shadow);
-}
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; box-shadow: var(--card-shadow); }
 .stat-label { font-size: 12px; font-weight: 500; color: var(--fg-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: var(--fg); }
 .stat-sub { font-size: 12px; color: var(--fg-muted); margin-top: 4px; }
 
 /* CARDS */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
-  margin-bottom: 20px;
-}
-.card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .card-title { font-weight: 600; font-size: 14px; color: var(--fg); }
 .card-body { padding: 20px; }
 
@@ -252,11 +113,7 @@ tr:hover td { background: rgba(0,0,0,0.02); }
 :root[data-theme="dark"] tr:hover td { background: rgba(255,255,255,0.02); }
 
 /* BADGES */
-.badge {
-  display: inline-flex; align-items: center;
-  padding: 3px 10px; border-radius: 20px;
-  font-size: 11.5px; font-weight: 600;
-}
+.badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
 .badge-green { background: var(--success-bg); color: var(--success); }
 .badge-yellow { background: var(--warning-bg); color: var(--warning); }
 .badge-red { background: var(--danger-bg); color: var(--danger); }
@@ -265,119 +122,85 @@ tr:hover td { background: rgba(0,0,0,0.02); }
 :root[data-theme="dark"] .badge-blue { background: #1e3a5f; color: #93c5fd; }
 
 /* BUTTONS */
-.btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border-radius: 8px;
-  font-size: 13.5px; font-weight: 600;
-  cursor: pointer; border: none; transition: background 0.15s, opacity 0.15s;
-  font-family: inherit;
-}
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, opacity 0.15s; font-family: inherit; }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-primary:hover { background: var(--accent-hover); }
 .btn-secondary { background: var(--input-bg); color: var(--fg); border: 1px solid var(--border); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-.btn-danger { background: var(--danger-bg); color: var(--danger); }
+.btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+.btn-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
 .btn-sm { padding: 5px 12px; font-size: 12px; }
 .btn-icon { padding: 6px; border-radius: 6px; background: var(--input-bg); color: var(--fg-muted); border: 1px solid var(--border); cursor: pointer; display: inline-flex; }
 .btn-icon:hover { color: var(--accent); border-color: var(--accent); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* FORMS */
 .form-group { margin-bottom: 16px; }
 .form-label { display: block; font-size: 12.5px; font-weight: 600; color: var(--fg-muted); margin-bottom: 6px; }
-.form-input {
-  width: 100%; padding: 9px 12px;
-  background: var(--input-bg); border: 1.5px solid var(--border);
-  border-radius: 8px; font-size: 13.5px; color: var(--fg);
-  font-family: inherit; transition: border-color 0.15s;
-  outline: none;
-}
+.form-input { width: 100%; padding: 9px 12px; background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13.5px; color: var(--fg); font-family: inherit; transition: border-color 0.15s; outline: none; }
 .form-input:focus { border-color: var(--accent); background: var(--surface); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-hint { font-size: 11.5px; color: var(--fg-muted); margin-top: 4px; }
 
 /* MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-  display: none; align-items: center; justify-content: center;
-  z-index: 100; padding: 16px;
-}
-.modal-overlay:not([hidden]) {
-  display: flex;
-}
-.modal {
-  background: var(--surface); border-radius: 14px;
-  width: 100%; max-width: 480px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  overflow: hidden;
-}
-.modal-header {
-  padding: 18px 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+.modal-overlay:not([hidden]) { display: flex; }
+.modal { background: var(--surface); border-radius: 14px; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+.modal-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .modal-title { font-weight: 700; font-size: 15px; font-family: 'Space Grotesk', sans-serif; }
-.modal-body { padding: 20px; }
-.modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+.modal-body { padding: 20px; overflow-y: auto; }
+.modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; flex-shrink: 0; }
 
 /* AUTH */
-.auth-screen {
-  min-height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg);
-  padding: max(24px, env(safe-area-inset-left, 0px));
-}
-.auth-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 36px 32px;
-  width: 100%; max-width: 400px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-}
-.auth-logo {
-  text-align: center; margin-bottom: 28px;
-}
+.auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); padding: 24px; }
+.auth-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 400px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+.auth-logo { text-align: center; margin-bottom: 28px; }
 .auth-logo h1 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--fg); }
 .auth-logo p { font-size: 13px; color: var(--fg-muted); margin-top: 4px; }
-.auth-nfc-icon {
-  width: 52px; height: 52px;
-  background: var(--accent);
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 14px;
-}
+.auth-nfc-icon { width: 52px; height: 52px; background: var(--accent); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
 .auth-tabs { display: flex; background: var(--input-bg); border-radius: 9px; padding: 3px; margin-bottom: 24px; }
-.auth-tab {
-  flex: 1; padding: 8px; border-radius: 7px;
-  font-size: 13px; font-weight: 600; text-align: center;
-  cursor: pointer; border: none; background: none;
-  color: var(--fg-muted); font-family: inherit; transition: all 0.15s;
-}
+.auth-tab { flex: 1; padding: 8px; border-radius: 7px; font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; border: none; background: none; color: var(--fg-muted); font-family: inherit; transition: all 0.15s; }
 .auth-tab.active { background: var(--surface); color: var(--fg); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 .auth-error { background: var(--danger-bg); color: var(--danger); padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
 .auth-success { background: var(--success-bg); color: var(--success); padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
 
-/* QR */
-.qr-placeholder {
-  width: 120px; height: 120px;
-  background: var(--input-bg);
-  border: 2px dashed var(--border);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--fg-muted); font-size: 12px; text-align: center;
-}
+/* FILTER TABS */
+.filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-tab { padding: 5px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: none; color: var(--fg-muted); font-family: inherit; transition: all 0.15s; }
+.filter-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.filter-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+/* PAGINATION */
+.pagination { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--fg-muted); }
+.pagination .btn-sm { min-width: 80px; justify-content: center; }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--fg-muted); }
+.empty-state svg { margin-bottom: 12px; opacity: 0.4; }
+.empty-state p { font-size: 14px; }
+
+/* CODE CHIP */
+.copy-wrap { display: flex; align-items: center; gap: 8px; }
+.code-chip { background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12.5px; font-family: monospace; color: var(--fg); letter-spacing: 0.05em; font-weight: 600; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: #f1f5f9; padding: 12px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; transform: translateY(8px); }
+.toast.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+/* PROGRESS BAR */
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.progress-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+
+/* INLINE EDIT */
+.inline-edit-btn { background: none; border: none; cursor: pointer; color: var(--fg-muted); padding: 2px 4px; border-radius: 4px; font-size: 12px; }
+.inline-edit-btn:hover { color: var(--accent); background: var(--input-bg); }
 
 /* MOBILE */
-.mobile-menu-btn {
-  display: none;
-  background: none; border: none; cursor: pointer; color: var(--fg);
-  padding: 6px;
-}
+.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--fg); padding: 6px; }
 .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; }
 
 @media (max-width: 700px) {
-  .sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    transform: translateX(-100%);
-  }
+  .sidebar { position: fixed; top: 0; left: 0; bottom: 0; transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
   .sidebar-overlay.open { display: block; }
   .mobile-menu-btn { display: flex; }
@@ -388,41 +211,21 @@ tr:hover td { background: rgba(0,0,0,0.02); }
   .auth-box { padding: 24px 20px; }
 }
 
-/* EMPTY STATE */
-.empty-state {
-  text-align: center; padding: 48px 20px; color: var(--fg-muted);
-}
-.empty-state svg { margin-bottom: 12px; opacity: 0.4; }
-.empty-state p { font-size: 14px; }
-
-/* COPY BTN */
-.copy-wrap { display: flex; align-items: center; gap: 8px; }
-.code-chip {
-  background: var(--input-bg); border: 1px solid var(--border);
-  border-radius: 6px; padding: 4px 10px;
-  font-size: 12.5px; font-family: monospace; color: var(--fg);
-  letter-spacing: 0.05em; font-weight: 600;
-}
-
-/* NOTIFICATION */
-.toast {
-  position: fixed; bottom: 24px; right: 24px;
-  background: #1e293b; color: #f1f5f9;
-  padding: 12px 18px; border-radius: 10px;
-  font-size: 13.5px; font-weight: 500;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  z-index: 200; opacity: 0; pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
-  transform: translateY(8px);
-}
-.toast.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-
-/* LINK input row */
-.link-input-row { display: flex; gap: 8px; }
-.link-input-row .form-input { flex: 1; }
+/* AJUSTES */
+.settings-section { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 20px; margin-bottom: 16px; }
+.settings-section h3 { font-size: 14px; font-weight: 700; color: var(--fg); margin-bottom: 6px; }
+.settings-section p { font-size: 13px; color: var(--fg-muted); margin-bottom: 14px; line-height: 1.5; }
+.settings-info { font-size: 12px; color: var(--fg-muted); background: var(--input-bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
+.settings-info strong { color: var(--fg); }
+.como-usar-steps { list-style: none; }
+.como-usar-steps li { font-size: 13px; color: var(--fg-muted); padding: 6px 0; padding-left: 24px; position: relative; line-height: 1.5; border-bottom: 1px solid var(--border); }
+.como-usar-steps li:last-child { border-bottom: none; }
+.como-usar-steps li::before { content: attr(data-n); position: absolute; left: 0; top: 6px; font-weight: 700; color: var(--accent); font-size: 13px; }
+.como-usar-steps li strong { color: var(--fg); }
 </style>
+</head>
+<body>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <!-- AUTH SCREEN -->
@@ -432,8 +235,6 @@ tr:hover td { background: rgba(0,0,0,0.02); }
       <div class="auth-nfc-icon">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12.5a7 7 0 0 1 7-7"/><path d="M5 16.5a11 11 0 0 1 11-11"/><circle cx="5" cy="12.5" r="1.5" fill="#fff" stroke="none"/>
-          <rect x="12" y="10" width="7" height="9" rx="1.5"/>
-          <path d="M15 10V8.5a1.5 1.5 0 0 1 3 0V10"/>
         </svg>
       </div>
       <h1>Gestão NFC</h1>
@@ -445,23 +246,17 @@ tr:hover td { background: rgba(0,0,0,0.02); }
     </div>
     <div id="authError" class="auth-error" hidden></div>
     <div id="authSuccess" class="auth-success" hidden></div>
-
-    <!-- LOGIN FORM -->
     <div id="loginForm">
       <div class="form-group">
         <label class="form-label">E-mail</label>
-        <input type="email" id="loginEmail" class="form-input" placeholder="seu@email.com">
+        <input type="email" id="loginEmail" class="form-input" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
-        <input type="password" id="loginPassword" class="form-input" placeholder="Sua senha">
+        <input type="password" id="loginPassword" class="form-input" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="doLogin()">
-        Entrar
-      </button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="doLogin()" id="loginBtn">Entrar</button>
     </div>
-
-    <!-- REGISTER FORM -->
     <div id="registerForm" hidden>
       <div class="form-group">
         <label class="form-label">Nome completo</label>
@@ -475,23 +270,19 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         <label class="form-label">Senha</label>
         <input type="password" id="regPassword" class="form-input" placeholder="Mínimo 6 caracteres">
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="doRegister()">
-        Criar conta
-      </button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="doRegister()">Criar conta</button>
     </div>
   </div>
 </div>
 
 <!-- APP SHELL -->
 <div id="appShell" class="app" hidden>
-  <!-- Sidebar overlay mobile -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-  <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <h1>Gestão NFC</h1>
-      <span id="sidebarOrgName">Carregando...</span>
+      <span id="sidebarOrgName">NeoVibe</span>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-section-label">Principal</div>
@@ -503,16 +294,17 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a7 7 0 0 1 7-7"/><path d="M5 16.5a11 11 0 0 1 11-11"/><circle cx="5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/></svg>
         Minhas Placas
       </button>
+      <button class="nav-item" onclick="navigate('gerar')" id="nav-gerar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Gerar Placas
+      </button>
       <button class="nav-item" onclick="navigate('clientes')" id="nav-clientes">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Clientes
       </button>
-    </div>
-    <div class="sidebar-section" id="adminSection" hidden>
-      <div class="sidebar-section-label">Administrador</div>
-      <button class="nav-item" onclick="navigate('admin')" id="nav-admin">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        Todos os Usuários
+      <button class="nav-item" onclick="navigate('ajustes')" id="nav-ajustes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Ajustes
       </button>
     </div>
     <div class="sidebar-user">
@@ -527,7 +319,6 @@ tr:hover td { background: rgba(0,0,0,0.02); }
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
   <div class="main">
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:12px;">
@@ -537,15 +328,13 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         <span class="topbar-title" id="topbarTitle">Dashboard</span>
       </div>
       <div class="topbar-actions">
-        <button class="btn btn-primary btn-sm" id="topbarCTA" onclick="topbarAction()">
-          + Nova Placa
-        </button>
+        <button class="btn btn-primary btn-sm" id="topbarCTA" onclick="topbarAction()" hidden></button>
       </div>
     </div>
 
     <div class="content">
 
-      <!-- DASHBOARD VIEW -->
+      <!-- DASHBOARD -->
       <div class="view active" id="view-dashboard">
         <div class="stats-row">
           <div class="stat-card">
@@ -559,9 +348,9 @@ tr:hover td { background: rgba(0,0,0,0.02); }
             <div class="stat-sub">com link configurado</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Pendentes</div>
-            <div class="stat-value" id="statPendentes" style="color:var(--warning)">0</div>
-            <div class="stat-sub">aguardando ativação</div>
+            <div class="stat-label">Livres</div>
+            <div class="stat-value" id="statLivres" style="color:var(--warning)">0</div>
+            <div class="stat-sub">sem cliente</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Clientes</div>
@@ -569,7 +358,15 @@ tr:hover td { background: rgba(0,0,0,0.02); }
             <div class="stat-sub">cadastrados</div>
           </div>
         </div>
-
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-body" style="padding:14px 20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12.5px;font-weight:600;color:var(--fg-muted);">OCUPAÇÃO DAS PLACAS</span>
+              <span style="font-size:12px;color:var(--fg-muted);" id="dashPercent">0%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar-fill" id="dashProgress" style="width:0%"></div></div>
+          </div>
+        </div>
         <div class="card">
           <div class="card-header">
             <span class="card-title">Placas Recentes</span>
@@ -578,53 +375,99 @@ tr:hover td { background: rgba(0,0,0,0.02); }
           <div class="card-body" style="padding:0;">
             <div class="table-wrap">
               <table>
-                <thead>
-                  <tr>
-                    <th>Código</th>
-                    <th>Cliente</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="dashboardTableBody">
-                  <tr><td colspan="4"><div class="empty-state"><p>Nenhuma placa ainda</p></div></td></tr>
-                </tbody>
+                <thead><tr><th>Código</th><th>Cliente</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="dashboardTableBody"></tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PLACAS VIEW -->
+      <!-- PLACAS -->
       <div class="view" id="view-placas">
         <div class="card">
           <div class="card-header">
             <span class="card-title">Minhas Placas</span>
-            <div style="display:flex;gap:8px;">
-              <input type="text" class="form-input" style="width:180px;padding:6px 10px;font-size:13px;" placeholder="Buscar código..." id="searchPlacas" oninput="filterPlacas()">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <input type="text" class="form-input" style="width:180px;padding:6px 10px;font-size:13px;" placeholder="Buscar código ou cliente..." id="searchPlacas" oninput="renderPlacas()">
               <button class="btn btn-primary btn-sm" onclick="showAddPlacaModal()">+ Nova Placa</button>
             </div>
+          </div>
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="setFilter('todas')" id="ftab-todas">Todas</button>
+              <button class="filter-tab" onclick="setFilter('ativas')" id="ftab-ativas">Ativas</button>
+              <button class="filter-tab" onclick="setFilter('livres')" id="ftab-livres">Livres</button>
+            </div>
+            <span style="font-size:12px;color:var(--fg-muted);margin-left:auto;" id="placasCount"></span>
           </div>
           <div class="card-body" style="padding:0;">
             <div class="table-wrap">
               <table>
-                <thead>
-                  <tr>
-                    <th>Código</th>
-                    <th>Estabelecimento</th>
-                    <th>Link Google</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
+                <thead><tr><th>Nº</th><th>Código</th><th>Cliente</th><th>Link Google</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody id="placasTableBody"></tbody>
               </table>
             </div>
+            <div class="pagination" id="placasPagination"></div>
           </div>
         </div>
       </div>
 
-      <!-- CLIENTES VIEW -->
+      <!-- GERAR -->
+      <div class="view" id="view-gerar">
+        <div class="settings-section">
+          <h3>Gerar placas novas</h3>
+          <p>Cada placa recebe um código único. O link Google é colocado depois, ao entregar a placa.</p>
+          <div class="form-row" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">QUANTIDADE</label>
+              <input type="number" id="gerarQtd" class="form-input" value="20" min="1" max="500">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">NOME DO LOTE (OPCIONAL)</label>
+              <input type="text" id="gerarLote" class="form-input" placeholder="Ex.: Gráfica novembro">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="gerarPlacas()" id="btnGerar" style="width:100%;justify-content:center;padding:11px;">Gerar e salvar</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Baixar QR Codes</h3>
+          <p>Cada QR sai com o código e o número da placa embaixo.</p>
+          <div class="form-row" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">DO Nº</label>
+              <input type="number" id="qrDe" class="form-input" value="1" min="1">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">ATÉ O Nº</label>
+              <input type="number" id="qrAte" class="form-input" value="498" min="1">
+            </div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--fg);">
+              <input type="checkbox" id="soLivres" style="width:16px;height:16px;cursor:pointer;">
+              Só placas livres (sem cliente)
+            </label>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="baixarPDF()" id="btnPDF" style="flex:1;justify-content:center;padding:11px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              PDF para imprimir
+            </button>
+            <button class="btn btn-secondary" onclick="baixarZIP()" id="btnZIP" style="flex:1;justify-content:center;padding:11px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Imagens PNG (ZIP)
+            </button>
+          </div>
+          <div class="form-hint" style="margin-top:10px;">O PDF vem em folhas A4, 20 placas por folha, com linhas para recorte. O ZIP traz uma imagem por placa, ideal para enviar à gráfica.</div>
+        </div>
+
+        <!-- QR preview oculto -->
+        <div id="qrPreviewArea" style="position:absolute;left:-9999px;top:0;"></div>
+      </div>
+
+      <!-- CLIENTES -->
       <div class="view" id="view-clientes">
         <div class="card">
           <div class="card-header">
@@ -634,15 +477,7 @@ tr:hover td { background: rgba(0,0,0,0.02); }
           <div class="card-body" style="padding:0;">
             <div class="table-wrap">
               <table>
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Estabelecimento</th>
-                    <th>Placas</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
+                <thead><tr><th>Nome</th><th>Contato</th><th>Placas</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody id="clientesTableBody"></tbody>
               </table>
             </div>
@@ -650,50 +485,62 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         </div>
       </div>
 
-      <!-- ADMIN VIEW -->
-      <div class="view" id="view-admin">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Todos os Usuários do Sistema</span>
+      <!-- AJUSTES -->
+      <div class="view" id="view-ajustes">
+        <div class="settings-section">
+          <h3>Conta</h3>
+          <div class="settings-info">
+            <strong id="ajustesEmail">—</strong><br>
+            <span id="ajustesRole">Conta ativa</span>
           </div>
-          <div class="card-body" style="padding:0;">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Usuário</th>
-                    <th>E-mail</th>
-                    <th>Placas</th>
-                    <th>Criado em</th>
-                  </tr>
-                </thead>
-                <tbody id="adminTableBody">
-                  <tr><td colspan="4"><div class="empty-state"><p>Conecte o Supabase para ver os usuários</p></div></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <button class="btn btn-danger btn-sm" onclick="doLogout()">Sair deste dispositivo</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Exportar</h3>
+          <p>Baixe um CSV com todas as placas para usar em outros sistemas.</p>
+          <button class="btn btn-secondary" onclick="exportarCSV()" style="width:100%;justify-content:center;padding:11px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSV de todas as placas
+          </button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Recarregar dados</h3>
+          <p>Sincroniza as placas e clientes com o banco de dados.</p>
+          <button class="btn btn-secondary" onclick="recarregarDados()" style="width:100%;justify-content:center;padding:11px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Recarregar dados
+          </button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Como usar</h3>
+          <ol class="como-usar-steps">
+            <li data-n="1."><strong>Gerar:</strong> crie um lote e baixe a folha para impressão.</li>
+            <li data-n="2.">Grave o chip NFC de cada placa no painel dela (Android) ou com o NFC Tools.</li>
+            <li data-n="3.">Ao entregar, abra a placa, cole o link Google do cliente e toque em <strong>Salvar</strong>.</li>
+            <li data-n="4.">Em 1 a 2 minutos o QR já leva direto à avaliação.</li>
+          </ol>
         </div>
       </div>
 
-    </div>
-  </div>
-</div>
+    </div><!-- end .content -->
+  </div><!-- end .main -->
+</div><!-- end #appShell -->
 
 <!-- MODAL: Nova/Editar Placa -->
 <div class="modal-overlay" id="placaModal" hidden>
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title" id="placaModalTitle">Nova Placa</span>
-      <button class="btn-icon" onclick="closeModal('placaModal')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <button class="btn-icon" onclick="closeModal('placaModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Código da Placa</label>
         <input type="text" id="placaCodigo" class="form-input" placeholder="Ex: TK-0001" style="text-transform:uppercase;">
-        <div style="font-size:11.5px;color:var(--fg-muted);margin-top:4px;">Deixe vazio para gerar automaticamente</div>
+        <div class="form-hint">Deixe vazio para gerar automaticamente</div>
       </div>
       <div class="form-group">
         <label class="form-label">Nome do Estabelecimento</label>
@@ -720,9 +567,7 @@ tr:hover td { background: rgba(0,0,0,0.02); }
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title">Novo Cliente</span>
-      <button class="btn-icon" onclick="closeModal('clienteModal')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <button class="btn-icon" onclick="closeModal('clienteModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-row">
@@ -751,28 +596,37 @@ tr:hover td { background: rgba(0,0,0,0.02); }
   </div>
 </div>
 
-<!-- MODAL: Editar Link -->
-<div class="modal-overlay" id="editLinkModal" hidden>
+<!-- MODAL: Editar Placa (link + cliente) -->
+<div class="modal-overlay" id="editPlacaModal" hidden>
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Editar Link da Placa</span>
-      <button class="btn-icon" onclick="closeModal('editLinkModal')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <span class="modal-title">Editar Placa <span id="editPlacaCodChip" class="code-chip" style="font-size:13px;margin-left:6px;"></span></span>
+      <button class="btn-icon" onclick="closeModal('editPlacaModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
-      <div style="margin-bottom:16px;">
-        <div class="form-label">Código da Placa</div>
-        <div class="code-chip" id="editLinkCodigo"></div>
+      <div class="form-group">
+        <label class="form-label">Nome do Estabelecimento / Cliente</label>
+        <input type="text" id="editPlacaNome" class="form-input" placeholder="Ex: Padaria do João">
       </div>
       <div class="form-group">
         <label class="form-label">Link do Google Review</label>
-        <input type="url" id="editLinkUrl" class="form-input" placeholder="https://search.google.com/local/writereview?...">
+        <input type="url" id="editPlacaLink" class="form-input" placeholder="https://search.google.com/local/writereview?...">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('editLinkModal')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveEditLink()">Salvar Link</button>
+      <button class="btn btn-secondary" onclick="closeModal('editPlacaModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditPlaca()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Loading/progresso geração -->
+<div class="modal-overlay" id="loadingModal" hidden>
+  <div class="modal" style="max-width:340px;">
+    <div class="modal-body" style="text-align:center;padding:32px 24px;">
+      <div id="loadingIcon" style="margin-bottom:14px;"></div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px;" id="loadingTitle">Aguarde...</div>
+      <div style="font-size:13px;color:var(--fg-muted);" id="loadingMsg">Processando</div>
     </div>
   </div>
 </div>
@@ -780,10 +634,11 @@ tr:hover td { background: rgba(0,0,0,0.02); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ============================================================
-// CONFIGURAÇÃO SUPABASE
+// CONFIG SUPABASE
 // ============================================================
 const SUPABASE_URL = 'https://niozrlfufwihbrtsldbo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_B8Z2TT6kNMEI7_H-XOTlHA_pfm7CcQ0';
+const BASE_URL = 'https://neovibeavalie.com.br/';
 
 // ============================================================
 // STATE
@@ -792,33 +647,31 @@ let currentUser = null;
 let placas = [];
 let clientes = [];
 let editingPlacaId = null;
-let editingLinkId = null;
+let placaFilter = 'todas';
+let placaPage = 1;
+const PAGE_SIZE = 50;
 
 // ============================================================
-// SUPABASE REST API HELPER
+// SUPABASE HELPER
 // ============================================================
 async function sb(method, path, body) {
   const headers = {
     'apikey': SUPABASE_KEY,
     'Content-Type': 'application/json',
-    'Prefer': method === 'POST' ? 'return=representation' : 'return=representation'
+    'Prefer': 'return=representation'
   };
   if (currentUser?.access_token) headers['Authorization'] = 'Bearer ' + currentUser.access_token;
-
   const res = await fetch(SUPABASE_URL + path, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined
+    method, headers, body: body ? JSON.stringify(body) : undefined
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || err.error_description || 'Erro na requisição');
+    throw new Error(err.message || err.error_description || 'Erro ' + res.status);
   }
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
 
-// Auth helpers
 async function authRequest(endpoint, body) {
   const res = await fetch(SUPABASE_URL + '/auth/v1/' + endpoint, {
     method: 'POST',
@@ -831,14 +684,10 @@ async function authRequest(endpoint, body) {
 }
 
 // ============================================================
-// LOCAL STORAGE FALLBACK (funciona sem Supabase)
+// LOCAL STORAGE
 // ============================================================
-function lsGet(key, def) {
-  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
-}
-function lsSet(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
-}
+function lsGet(key, def) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; } }
+function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
 function generateCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -856,34 +705,26 @@ function switchAuthTab(tab) {
   document.getElementById('registerForm').hidden = tab !== 'register';
   clearAuthMsg();
 }
-
-function showAuthError(msg) {
-  const el = document.getElementById('authError');
-  el.textContent = msg; el.hidden = false;
-  document.getElementById('authSuccess').hidden = true;
-}
-function showAuthSuccess(msg) {
-  const el = document.getElementById('authSuccess');
-  el.textContent = msg; el.hidden = false;
-  document.getElementById('authError').hidden = true;
-}
-function clearAuthMsg() {
-  document.getElementById('authError').hidden = true;
-  document.getElementById('authSuccess').hidden = true;
-}
+function showAuthError(msg) { const el = document.getElementById('authError'); el.textContent = msg; el.hidden = false; document.getElementById('authSuccess').hidden = true; }
+function showAuthSuccess(msg) { const el = document.getElementById('authSuccess'); el.textContent = msg; el.hidden = false; document.getElementById('authError').hidden = true; }
+function clearAuthMsg() { document.getElementById('authError').hidden = true; document.getElementById('authSuccess').hidden = true; }
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass = document.getElementById('loginPassword').value;
   if (!email || !pass) return showAuthError('Preencha e-mail e senha.');
   clearAuthMsg();
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'Entrando...'; btn.disabled = true;
   try {
     const data = await authRequest('token?grant_type=password', { email, password: pass });
     currentUser = { ...data.user, access_token: data.access_token, email };
     lsSet('gn_user', currentUser);
     enterApp();
   } catch (e) {
-    showAuthError('Email ou senha incorretos. Tente novamente.');
+    showAuthError('Email ou senha incorretos.');
+  } finally {
+    btn.textContent = 'Entrar'; btn.disabled = false;
   }
 }
 
@@ -898,16 +739,12 @@ async function doRegister() {
     await authRequest('signup', { email, password: pass, data: { name } });
     showAuthSuccess('Conta criada! Verifique seu e-mail para confirmar.');
   } catch (e) {
-    // demo fallback
-    currentUser = { id: 'local_' + Date.now(), email, name, access_token: null };
-    lsSet('gn_user', currentUser);
-    enterApp();
+    showAuthError(e.message || 'Erro ao criar conta.');
   }
 }
 
 function doLogout() {
-  currentUser = null;
-  lsSet('gn_user', null);
+  currentUser = null; lsSet('gn_user', null);
   placas = []; clientes = [];
   document.getElementById('appShell').style.display = 'none';
   document.getElementById('appShell').hidden = true;
@@ -920,74 +757,74 @@ async function enterApp() {
   document.getElementById('authScreen').hidden = true;
   document.getElementById('appShell').style.display = 'flex';
   document.getElementById('appShell').hidden = false;
-  const name = currentUser.user_metadata?.name || currentUser.name || currentUser.email.split('@')[0];
-  const initial = name[0].toUpperCase();
-  document.getElementById('userAvatarSidebar').textContent = initial;
+  const name = currentUser.user_metadata?.name || currentUser.name || currentUser.email?.split('@')[0] || 'U';
+  document.getElementById('userAvatarSidebar').textContent = name[0].toUpperCase();
   document.getElementById('userNameSidebar').textContent = name;
-  document.getElementById('userRoleSidebar').textContent = currentUser.access_token ? 'Conta ativa' : 'Modo demo';
-  document.getElementById('sidebarOrgName').textContent = 'Gestão NFC';
+  document.getElementById('userRoleSidebar').textContent = 'Conta ativa';
+  document.getElementById('sidebarOrgName').textContent = 'NeoVibe';
+  document.getElementById('ajustesEmail').textContent = currentUser.email || '—';
   await loadData();
   navigate('dashboard');
 }
 
 // ============================================================
-// DATA (Supabase com fallback localStorage)
+// DATA
 // ============================================================
 async function loadData() {
-  if (!currentUser?.access_token) {
-    // modo demo: usa localStorage
-    const uid = currentUser.id || currentUser.email;
-    placas = lsGet('gn_placas_' + uid, []);
-    clientes = lsGet('gn_clientes_' + uid, []);
-    return;
-  }
+  if (!currentUser?.access_token) return;
   try {
     const [p, c] = await Promise.all([
-      sb('GET', '/rest/v1/placas?order=criado_em.desc&select=*'),
-      sb('GET', '/rest/v1/clientes?order=criado_em.desc&select=*')
+      sb('GET', '/rest/v1/placas?order=criado_em.asc&select=*&limit=2000'),
+      sb('GET', '/rest/v1/clientes?order=criado_em.desc&select=*&limit=1000')
     ]);
-    placas = (p || []).map(r => ({
-      id: r.id, codigo: r.codigo, nome: r.cliente || '', link: r.url, cliente: r.cliente, criadoEm: r.criado_em
+    placas = (p || []).map((r, idx) => ({
+      id: r.id, num: idx + 1, codigo: r.codigo,
+      nome: r.cliente || '', link: r.url || '',
+      cliente: r.cliente || '', criadoEm: r.criado_em
     }));
     clientes = (c || []).map(r => ({
       id: r.id, nome: r.nome, estab: '', contato: r.telefone || r.email || '', obs: '', criadoEm: r.criado_em
     }));
   } catch (e) {
-    console.error('Erro ao carregar dados:', e);
-    const uid = currentUser.id || currentUser.email;
-    placas = lsGet('gn_placas_' + uid, []);
-    clientes = lsGet('gn_clientes_' + uid, []);
+    console.error('Erro loadData:', e);
+    showToast('Erro ao carregar dados: ' + e.message);
   }
 }
 
-async function saveData() {
-  const uid = currentUser.id || currentUser.email;
-  lsSet('gn_placas_' + uid, placas);
-  lsSet('gn_clientes_' + uid, clientes);
+async function recarregarDados() {
+  showToast('Recarregando...');
+  await loadData();
+  renderView(currentView());
+  showToast('Dados atualizados!');
+}
+
+function currentView() {
+  return document.querySelector('.nav-item.active')?.id?.replace('nav-','') || 'dashboard';
 }
 
 // ============================================================
 // NAVIGATION
 // ============================================================
-const viewTitles = { dashboard: 'Dashboard', placas: 'Minhas Placas', clientes: 'Clientes', admin: 'Administrador' };
-const viewCTA = { dashboard: '+ Nova Placa', placas: '+ Nova Placa', clientes: '+ Novo Cliente', admin: '' };
+const viewTitles = { dashboard: 'Dashboard', placas: 'Minhas Placas', gerar: 'Gerar Placas', clientes: 'Clientes', ajustes: 'Ajustes' };
+const viewCTAs   = { placas: '+ Nova Placa', clientes: '+ Novo Cliente' };
 
 function navigate(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('view-' + view).classList.add('active');
+  const viewEl = document.getElementById('view-' + view);
+  if (viewEl) viewEl.classList.add('active');
   document.getElementById('nav-' + view)?.classList.add('active');
   document.getElementById('topbarTitle').textContent = viewTitles[view] || view;
   const cta = document.getElementById('topbarCTA');
-  cta.textContent = viewCTA[view] || '';
-  cta.hidden = !viewCTA[view];
+  if (viewCTAs[view]) { cta.textContent = viewCTAs[view]; cta.hidden = false; }
+  else { cta.hidden = true; }
   closeSidebar();
   renderView(view);
 }
 
 function topbarAction() {
-  const active = document.querySelector('.nav-item.active')?.id?.replace('nav-','') || 'dashboard';
-  if (active === 'clientes') showAddClienteModal();
+  const v = currentView();
+  if (v === 'clientes') showAddClienteModal();
   else showAddPlacaModal();
 }
 
@@ -995,6 +832,7 @@ function renderView(view) {
   if (view === 'dashboard') renderDashboard();
   else if (view === 'placas') renderPlacas();
   else if (view === 'clientes') renderClientes();
+  else if (view === 'gerar') updateGerarCount();
 }
 
 // ============================================================
@@ -1002,25 +840,28 @@ function renderView(view) {
 // ============================================================
 function renderDashboard() {
   const ativas = placas.filter(p => p.link);
-  const pendentes = placas.filter(p => !p.link);
+  const livres = placas.filter(p => !p.link);
+  const pct = placas.length ? Math.round(ativas.length / placas.length * 100) : 0;
   document.getElementById('statTotal').textContent = placas.length;
   document.getElementById('statAtivas').textContent = ativas.length;
-  document.getElementById('statPendentes').textContent = pendentes.length;
-  document.getElementById('statClientes').textContent = clientes.length;
+  document.getElementById('statLivres').textContent = livres.length;
+  document.getElementById('statClientes').textContent = placas.filter(p => p.nome).length;
+  document.getElementById('dashPercent').textContent = pct + '%';
+  document.getElementById('dashProgress').style.width = pct + '%';
 
-  const recent = [...placas].reverse().slice(0, 5);
+  const recent = [...placas].reverse().slice(0, 8);
   const tbody = document.getElementById('dashboardTableBody');
   if (!recent.length) {
-    tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><p>Nenhuma placa cadastrada ainda. Clique em "+ Nova Placa" para começar.</p></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><p>Nenhuma placa cadastrada ainda.</p></div></td></tr>';
     return;
   }
   tbody.innerHTML = recent.map(p => `
     <tr>
       <td><span class="code-chip">${p.codigo}</span></td>
-      <td>${p.nome || '<span style="color:var(--fg-muted)">Sem nome</span>'}</td>
-      <td>${p.link ? `<span class="badge badge-green">Ativa</span>` : `<span class="badge badge-yellow">Pendente</span>`}</td>
+      <td>${p.nome || '<span style="color:var(--fg-muted)">Sem cliente</span>'}</td>
+      <td>${p.link ? '<span class="badge badge-green">Ativa</span>' : '<span class="badge badge-yellow">Livre</span>'}</td>
       <td>
-        <button class="btn-icon" onclick="openEditLink('${p.id}')" title="Editar link">
+        <button class="btn-icon" onclick="openEditPlaca('${p.id}')" title="Editar">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
       </td>
@@ -1031,32 +872,58 @@ function renderDashboard() {
 // ============================================================
 // PLACAS
 // ============================================================
-function renderPlacas(filter) {
-  const q = (filter !== undefined ? filter : document.getElementById('searchPlacas')?.value || '').toUpperCase();
-  const filtered = q ? placas.filter(p => p.codigo.includes(q) || (p.nome||'').toUpperCase().includes(q)) : placas;
+function setFilter(f) {
+  placaFilter = f;
+  placaPage = 1;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ftab-' + f).classList.add('active');
+  renderPlacas();
+}
+
+function getFilteredPlacas() {
+  const q = (document.getElementById('searchPlacas')?.value || '').toUpperCase();
+  let list = placas;
+  if (placaFilter === 'ativas') list = list.filter(p => p.link);
+  else if (placaFilter === 'livres') list = list.filter(p => !p.link);
+  if (q) list = list.filter(p => p.codigo.includes(q) || (p.nome||'').toUpperCase().includes(q));
+  return list;
+}
+
+function renderPlacas() {
+  const filtered = getFilteredPlacas();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (placaPage > totalPages) placaPage = totalPages;
+  const start = (placaPage - 1) * PAGE_SIZE;
+  const page = filtered.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('placasCount').textContent = total + ' placa' + (total !== 1 ? 's' : '');
+
   const tbody = document.getElementById('placasTableBody');
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>Nenhuma placa encontrada.</p></div></td></tr>';
+  if (!page.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>Nenhuma placa encontrada.</p></div></td></tr>';
+    document.getElementById('placasPagination').innerHTML = '';
     return;
   }
-  tbody.innerHTML = filtered.map(p => `
+  tbody.innerHTML = page.map(p => `
     <tr>
+      <td style="color:var(--fg-muted);font-size:12px;">Nº ${String(p.num || '').padStart(4,'0')}</td>
       <td>
         <div class="copy-wrap">
           <span class="code-chip">${p.codigo}</span>
-          <button class="btn-icon" onclick="copyCode('${p.codigo}')" title="Copiar código">
+          <button class="btn-icon" onclick="copyCode('${p.codigo}')" title="Copiar">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
         </div>
       </td>
-      <td>${p.nome || '<span style="color:var(--fg-muted)">—</span>'}</td>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+      <td>${p.nome || '<span style="color:var(--fg-muted)">Sem cliente</span>'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
         ${p.link ? `<a href="${p.link}" target="_blank" style="color:var(--accent);font-size:12px;">Ver link</a>` : '<span style="color:var(--fg-muted);font-size:12px;">Não configurado</span>'}
       </td>
-      <td>${p.link ? `<span class="badge badge-green">Ativa</span>` : `<span class="badge badge-yellow">Pendente</span>`}</td>
+      <td>${p.link ? '<span class="badge badge-green">Ativa</span>' : '<span class="badge badge-yellow">Livre</span>'}</td>
       <td>
         <div style="display:flex;gap:6px;">
-          <button class="btn-icon" onclick="openEditLink('${p.id}')" title="Editar link">
+          <button class="btn-icon" onclick="openEditPlaca('${p.id}')" title="Editar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
           <button class="btn-icon" onclick="deletePlaca('${p.id}')" title="Excluir" style="color:var(--danger);">
@@ -1066,9 +933,22 @@ function renderPlacas(filter) {
       </td>
     </tr>
   `).join('');
+
+  // Paginação
+  const pag = document.getElementById('placasPagination');
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+  pag.innerHTML = `
+    <button class="btn btn-secondary btn-sm" onclick="changePage(-1)" ${placaPage<=1?'disabled':''}>← Voltar</button>
+    <span>${start+1}–${Math.min(start+PAGE_SIZE,total)} de ${total} &nbsp;·&nbsp; Página ${placaPage} de ${totalPages}</span>
+    <button class="btn btn-secondary btn-sm" onclick="changePage(1)" ${placaPage>=totalPages?'disabled':''}>Avançar →</button>
+  `;
 }
 
-function filterPlacas() { renderPlacas(); }
+function changePage(dir) {
+  placaPage += dir;
+  renderPlacas();
+  document.getElementById('view-placas').scrollTop = 0;
+}
 
 // ============================================================
 // CLIENTES
@@ -1080,12 +960,11 @@ function renderClientes() {
     return;
   }
   tbody.innerHTML = clientes.map(c => {
-    const qtd = placas.filter(p => p.cliente === c.nome).length;
-    return `
-    <tr>
-      <td><strong>${c.nome}</strong>${c.contato ? `<div style="font-size:12px;color:var(--fg-muted)">${c.contato}</div>` : ''}</td>
-      <td>${c.estab || '—'}</td>
-      <td><span class="badge badge-blue">${qtd} placa${qtd !== 1 ? 's' : ''}</span></td>
+    const qtd = placas.filter(p => p.nome === c.nome || p.cliente === c.nome).length;
+    return `<tr>
+      <td><strong>${c.nome}</strong></td>
+      <td>${c.contato ? `<span style="font-size:12px;color:var(--fg-muted)">${c.contato}</span>` : '—'}</td>
+      <td><span class="badge badge-blue">${qtd} placa${qtd!==1?'s':''}</span></td>
       <td><span class="badge badge-green">Ativo</span></td>
       <td>
         <button class="btn-icon" onclick="deleteCliente('${c.id}')" title="Excluir" style="color:var(--danger);">
@@ -1094,6 +973,187 @@ function renderClientes() {
       </td>
     </tr>`;
   }).join('');
+}
+
+// ============================================================
+// GERAR PLACAS
+// ============================================================
+function updateGerarCount() {
+  const de = parseInt(document.getElementById('qrDe')?.value) || 1;
+  const ate = parseInt(document.getElementById('qrAte')?.value) || placas.length;
+  document.getElementById('qrAte').max = placas.length;
+}
+
+async function gerarPlacas() {
+  const qtd = parseInt(document.getElementById('gerarQtd').value);
+  if (!qtd || qtd < 1 || qtd > 500) return showToast('Quantidade inválida (1–500).');
+  const lote = document.getElementById('gerarLote').value.trim();
+  const btn = document.getElementById('btnGerar');
+  btn.textContent = 'Gerando...'; btn.disabled = true;
+
+  try {
+    const rows = [];
+    for (let i = 0; i < qtd; i++) {
+      let code;
+      do { code = generateCode(); } while (placas.find(p => p.codigo === code));
+      rows.push({ codigo: code, url: '', cliente: lote ? lote : '', user_id: currentUser.id });
+    }
+    // Inserir em lotes de 50
+    for (let i = 0; i < rows.length; i += 50) {
+      await sb('POST', '/rest/v1/placas', rows.slice(i, i+50));
+    }
+    await loadData();
+    renderView(currentView());
+    showToast(qtd + ' placas geradas com sucesso!');
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  } finally {
+    btn.textContent = 'Gerar e salvar'; btn.disabled = false;
+  }
+}
+
+// ============================================================
+// GERAR QR CODES (PDF / ZIP)
+// ============================================================
+function getQRPlacas() {
+  let de = parseInt(document.getElementById('qrDe').value) || 1;
+  let ate = parseInt(document.getElementById('qrAte').value) || placas.length;
+  const soLivres = document.getElementById('soLivres').checked;
+  let lista = placas.filter(p => p.num >= de && p.num <= ate);
+  if (soLivres) lista = lista.filter(p => !p.link);
+  return lista;
+}
+
+async function gerarQRDataURLs(lista) {
+  const area = document.getElementById('qrPreviewArea');
+  area.innerHTML = '';
+  const results = [];
+  for (const p of lista) {
+    const div = document.createElement('div');
+    area.appendChild(div);
+    await new Promise(resolve => {
+      const qr = new QRCode(div, {
+        text: BASE_URL + p.codigo,
+        width: 200, height: 200,
+        colorDark: '#000000', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      setTimeout(resolve, 50);
+    });
+    const img = div.querySelector('img') || div.querySelector('canvas');
+    let dataUrl = '';
+    if (img && img.tagName === 'IMG') dataUrl = img.src;
+    else if (img && img.tagName === 'CANVAS') dataUrl = img.toDataURL('image/png');
+    results.push({ p, dataUrl });
+  }
+  area.innerHTML = '';
+  return results;
+}
+
+async function baixarPDF() {
+  const lista = getQRPlacas();
+  if (!lista.length) return showToast('Nenhuma placa no intervalo selecionado.');
+  const btn = document.getElementById('btnPDF');
+  btn.textContent = 'Gerando PDF...'; btn.disabled = true;
+  showLoading('Gerando PDF...', 'Aguarde, criando QR codes...');
+  try {
+    const qrs = await gerarQRDataURLs(lista);
+    // Gerar PDF como HTML para impressão
+    const PER_PAGE = 20;
+    const pages = [];
+    for (let i = 0; i < qrs.length; i += PER_PAGE) pages.push(qrs.slice(i, i+PER_PAGE));
+
+    let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>QR Codes NeoVibe</title>
+    <style>
+      @page { size: A4; margin: 10mm; }
+      body { margin: 0; font-family: Arial, sans-serif; }
+      .page { page-break-after: always; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; }
+      .page:last-child { page-break-after: auto; }
+      .item { border: 1px dashed #ccc; padding: 4mm; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .item img { width: 40mm; height: 40mm; }
+      .item .code { font-size: 9pt; font-weight: bold; font-family: monospace; margin-top: 2mm; letter-spacing: 1px; }
+      .item .num { font-size: 7pt; color: #666; }
+    </style></head><body>`;
+    for (const page of pages) {
+      html += '<div class="page">';
+      for (const { p, dataUrl } of page) {
+        html += `<div class="item"><img src="${dataUrl}"><div class="code">${p.codigo}</div><div class="num">Nº ${String(p.num).padStart(4,'0')}</div></div>`;
+      }
+      html += '</div>';
+    }
+    html += '</body></html>';
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'qrcodes-neovibe.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('PDF gerado! Abra o arquivo e imprima (Ctrl+P).');
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  } finally {
+    btn.textContent = 'PDF para imprimir'; btn.disabled = false;
+    hideLoading();
+  }
+}
+
+async function baixarZIP() {
+  const lista = getQRPlacas();
+  if (!lista.length) return showToast('Nenhuma placa no intervalo selecionado.');
+  if (lista.length > 200) return showToast('Máximo 200 imagens por vez. Use os filtros.');
+  const btn = document.getElementById('btnZIP');
+  btn.textContent = 'Gerando...'; btn.disabled = true;
+  showLoading('Gerando imagens...', 'Criando ' + lista.length + ' QR codes...');
+  try {
+    const qrs = await gerarQRDataURLs(lista);
+    // Criar ZIP simples via download múltiplo (sem lib externa)
+    // Gera um HTML com link de download para cada imagem
+    let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Download QR Codes</title>
+    <style>body{font-family:Arial;padding:20px;} .grid{display:grid;grid-template-columns:repeat(auto-fill,120px);gap:12px;} .item{text-align:center;border:1px solid #eee;padding:8px;border-radius:8px;} .item img{width:100px;height:100px;} .code{font-size:11px;font-weight:bold;font-family:monospace;margin-top:4px;} a{display:block;font-size:11px;margin-top:4px;color:#2563eb;}</style>
+    </head><body><h2>QR Codes NeoVibe (${qrs.length})</h2><div class="grid">`;
+    for (const { p, dataUrl } of qrs) {
+      html += `<div class="item"><img src="${dataUrl}"><div class="code">${p.codigo}</div><a href="${dataUrl}" download="qr_${p.codigo}.png">Baixar</a></div>`;
+    }
+    html += '</div></body></html>';
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'qrcodes-neovibe-imgs.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Arquivo gerado! Abra e baixe cada imagem.');
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  } finally {
+    btn.textContent = 'Imagens PNG (ZIP)'; btn.disabled = false;
+    hideLoading();
+  }
+}
+
+function showLoading(title, msg) {
+  document.getElementById('loadingTitle').textContent = title;
+  document.getElementById('loadingMsg').textContent = msg;
+  document.getElementById('loadingIcon').innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+  document.getElementById('loadingModal').hidden = false;
+}
+function hideLoading() { document.getElementById('loadingModal').hidden = true; }
+
+// ============================================================
+// EXPORTAR CSV
+// ============================================================
+function exportarCSV() {
+  const header = 'numero;codigo;cliente;link_google';
+  const rows = placas.map(p => `${p.num};${p.codigo};${p.nome || ''};${p.link || ''}`);
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'placas-neovibe.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exportado!');
 }
 
 // ============================================================
@@ -1117,13 +1177,14 @@ function showAddClienteModal() {
   document.getElementById('clienteModal').hidden = false;
 }
 
-function openEditLink(id) {
+function openEditPlaca(id) {
   const p = placas.find(x => x.id === id);
   if (!p) return;
-  editingLinkId = id;
-  document.getElementById('editLinkCodigo').textContent = p.codigo;
-  document.getElementById('editLinkUrl').value = p.link || '';
-  document.getElementById('editLinkModal').hidden = false;
+  editingPlacaId = id;
+  document.getElementById('editPlacaCodChip').textContent = p.codigo;
+  document.getElementById('editPlacaNome').value = p.nome || '';
+  document.getElementById('editPlacaLink').value = p.link || '';
+  document.getElementById('editPlacaModal').hidden = false;
 }
 
 function closeModal(id) { document.getElementById(id).hidden = true; }
@@ -1133,100 +1194,68 @@ async function savePlaca() {
   const nome = document.getElementById('placaNome').value.trim();
   const link = document.getElementById('placaLink').value.trim();
   const cliente = document.getElementById('placaCliente').value.trim();
+  if (placas.find(p => p.codigo === codigo && p.id !== editingPlacaId)) return showToast('Código já existe!');
 
-  if (placas.find(p => p.codigo === codigo && p.id !== editingPlacaId)) {
-    return showToast('Código já existe!');
-  }
-
-  if (currentUser?.access_token) {
-    try {
-      if (editingPlacaId) {
-        await sb('PATCH', `/rest/v1/placas?id=eq.${editingPlacaId}`, { codigo, cliente: nome || cliente, url: link || '' });
-      } else {
-        const rows = await sb('POST', '/rest/v1/placas', { codigo, cliente: nome || cliente || '', url: link || '', user_id: currentUser.id });
-        const newRow = Array.isArray(rows) ? rows[0] : rows;
-        placas.unshift({ id: newRow.id, codigo, nome, link, cliente, criadoEm: newRow.criado_em });
-        closeModal('placaModal');
-        renderView(document.querySelector('.nav-item.active')?.id?.replace('nav-','') || 'dashboard');
-        showToast('Placa salva!');
-        return;
-      }
-      await loadData();
-    } catch(e) { showToast('Erro: ' + e.message); return; }
-  } else {
+  try {
     if (editingPlacaId) {
-      const p = placas.find(x => x.id === editingPlacaId);
-      if (p) { p.codigo = codigo; p.nome = nome; p.link = link; p.cliente = cliente; }
+      await sb('PATCH', `/rest/v1/placas?id=eq.${editingPlacaId}`, { codigo, cliente: nome || cliente, url: link });
     } else {
-      placas.push({ id: 'p_' + Date.now(), codigo, nome, link, cliente, criadoEm: new Date().toISOString() });
+      await sb('POST', '/rest/v1/placas', { codigo, cliente: nome || cliente || '', url: link || '', user_id: currentUser.id });
     }
-    saveData();
-  }
-  closeModal('placaModal');
-  renderView(document.querySelector('.nav-item.active')?.id?.replace('nav-','') || 'dashboard');
-  showToast('Placa salva!');
+    await loadData();
+    closeModal('placaModal');
+    renderView(currentView());
+    showToast('Placa salva!');
+  } catch(e) { showToast('Erro: ' + e.message); }
+}
+
+async function saveEditPlaca() {
+  const nome = document.getElementById('editPlacaNome').value.trim();
+  const link = document.getElementById('editPlacaLink').value.trim();
+  const p = placas.find(x => x.id === editingPlacaId);
+  if (!p) return;
+  try {
+    await sb('PATCH', `/rest/v1/placas?id=eq.${editingPlacaId}`, { cliente: nome, url: link });
+    p.nome = nome; p.link = link; p.cliente = nome;
+    closeModal('editPlacaModal');
+    renderView(currentView());
+    showToast('Placa atualizada!');
+  } catch(e) { showToast('Erro: ' + e.message); }
 }
 
 async function saveCliente() {
   const nome = document.getElementById('clienteNome').value.trim();
   const estab = document.getElementById('clienteEstab').value.trim();
   const contato = document.getElementById('clienteContato').value.trim();
-  const obs = document.getElementById('clienteObs').value.trim();
   if (!nome) return showToast('Informe o nome do cliente.');
-
-  if (currentUser?.access_token) {
-    try {
-      const rows = await sb('POST', '/rest/v1/clientes', { nome, email: '', telefone: contato, user_id: currentUser.id });
-      const newRow = Array.isArray(rows) ? rows[0] : rows;
-      clientes.unshift({ id: newRow.id, nome, estab, contato, obs, criadoEm: newRow.criado_em });
-    } catch(e) { showToast('Erro: ' + e.message); return; }
-  } else {
-    clientes.push({ id: 'c_' + Date.now(), nome, estab, contato, obs, criadoEm: new Date().toISOString() });
-    saveData();
-  }
-  closeModal('clienteModal');
-  renderClientes();
-  showToast('Cliente salvo!');
-}
-
-async function saveEditLink() {
-  const link = document.getElementById('editLinkUrl').value.trim();
-  const p = placas.find(x => x.id === editingLinkId);
-  if (!p) return;
-
-  if (currentUser?.access_token) {
-    try {
-      await sb('PATCH', `/rest/v1/placas?id=eq.${editingLinkId}`, { url: link });
-      p.link = link;
-    } catch(e) { showToast('Erro: ' + e.message); return; }
-  } else {
-    p.link = link;
-    saveData();
-  }
-  closeModal('editLinkModal');
-  renderView(document.querySelector('.nav-item.active')?.id?.replace('nav-','') || 'dashboard');
-  showToast('Link atualizado!');
+  try {
+    const rows = await sb('POST', '/rest/v1/clientes', { nome, email: '', telefone: contato, user_id: currentUser.id });
+    const newRow = Array.isArray(rows) ? rows[0] : rows;
+    clientes.unshift({ id: newRow.id, nome, estab, contato, obs: '', criadoEm: newRow.criado_em });
+    closeModal('clienteModal');
+    renderClientes();
+    showToast('Cliente salvo!');
+  } catch(e) { showToast('Erro: ' + e.message); }
 }
 
 async function deletePlaca(id) {
-  if (currentUser?.access_token) {
-    try { await sb('DELETE', `/rest/v1/placas?id=eq.${id}`); } catch(e) { showToast('Erro: ' + e.message); return; }
-  }
-  placas = placas.filter(p => p.id !== id);
-  saveData();
-  renderPlacas();
-  renderDashboard();
-  showToast('Placa excluída.');
+  if (!confirm('Excluir esta placa?')) return;
+  try {
+    await sb('DELETE', `/rest/v1/placas?id=eq.${id}`);
+    placas = placas.filter(p => p.id !== id);
+    renderPlacas(); renderDashboard();
+    showToast('Placa excluída.');
+  } catch(e) { showToast('Erro: ' + e.message); }
 }
 
 async function deleteCliente(id) {
-  if (currentUser?.access_token) {
-    try { await sb('DELETE', `/rest/v1/clientes?id=eq.${id}`); } catch(e) { showToast('Erro: ' + e.message); return; }
-  }
-  clientes = clientes.filter(c => c.id !== id);
-  saveData();
-  renderClientes();
-  showToast('Cliente excluído.');
+  if (!confirm('Excluir este cliente?')) return;
+  try {
+    await sb('DELETE', `/rest/v1/clientes?id=eq.${id}`);
+    clientes = clientes.filter(c => c.id !== id);
+    renderClientes();
+    showToast('Cliente excluído.');
+  } catch(e) { showToast('Erro: ' + e.message); }
 }
 
 // ============================================================
@@ -1241,7 +1270,7 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 function openSidebar() {
@@ -1256,11 +1285,12 @@ function closeSidebar() {
 // ============================================================
 // INIT
 // ============================================================
-window.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(m => m.hidden = true); });
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(m => m.hidden = true);
+});
 
 const saved = lsGet('gn_user', null);
-if (saved?.email) {
-  currentUser = saved;
-  enterApp();
-}
+if (saved?.email) { currentUser = saved; enterApp(); }
 </script>
+</body>
+</html>
