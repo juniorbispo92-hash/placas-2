@@ -298,10 +298,6 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Gerar Placas
       </button>
-      <button class="nav-item" onclick="navigate('clientes')" id="nav-clientes">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Clientes
-      </button>
       <button class="nav-item" onclick="navigate('ajustes')" id="nav-ajustes">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Ajustes
@@ -484,23 +480,6 @@ tr:hover td { background: rgba(0,0,0,0.02); }
         </div>
       </div>
 
-      <!-- CLIENTES -->
-      <div class="view" id="view-clientes">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Clientes</span>
-            <button class="btn btn-primary btn-sm" onclick="showAddClienteModal()">+ Novo Cliente</button>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Nome</th><th>Contato</th><th>Placas</th><th>Status</th><th>Ações</th></tr></thead>
-                <tbody id="clientesTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- AJUSTES -->
       <div class="view" id="view-ajustes">
@@ -579,39 +558,6 @@ tr:hover td { background: rgba(0,0,0,0.02); }
   </div>
 </div>
 
-<!-- MODAL: Novo Cliente -->
-<div class="modal-overlay" id="clienteModal" hidden>
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Novo Cliente</span>
-      <button class="btn-icon" onclick="closeModal('clienteModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Nome do Cliente</label>
-          <input type="text" id="clienteNome" class="form-input" placeholder="Nome completo">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Estabelecimento</label>
-          <input type="text" id="clienteEstab" class="form-input" placeholder="Nome do negócio">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">WhatsApp / Contato</label>
-        <input type="text" id="clienteContato" class="form-input" placeholder="(85) 9 9999-9999">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Observações</label>
-        <input type="text" id="clienteObs" class="form-input" placeholder="Plano, tipo de serviço...">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('clienteModal')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveCliente()">Salvar Cliente</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL: Editar Placa (link + cliente) -->
 <div class="modal-overlay" id="editPlacaModal" hidden>
@@ -829,7 +775,7 @@ function currentView() {
 // NAVIGATION
 // ============================================================
 const viewTitles = { dashboard: 'Dashboard', placas: 'Minhas Placas', gerar: 'Gerar Placas', clientes: 'Clientes', ajustes: 'Ajustes' };
-const viewCTAs   = { placas: '+ Nova Placa', clientes: '+ Novo Cliente' };
+const viewCTAs   = { placas: '+ Nova Placa' };
 
 function navigate(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -847,8 +793,7 @@ function navigate(view) {
 
 function topbarAction() {
   const v = currentView();
-  if (v === 'clientes') showAddClienteModal();
-  else showAddPlacaModal();
+  showAddPlacaModal();
 }
 
 function renderView(view) {
@@ -868,7 +813,8 @@ function renderDashboard() {
   document.getElementById('statTotal').textContent = placas.length;
   document.getElementById('statAtivas').textContent = ativas.length;
   document.getElementById('statLivres').textContent = livres.length;
-  document.getElementById('statClientes').textContent = placas.filter(p => p.nome).length;
+  const nomesUnicos = new Set(placas.filter(p => p.nome).map(p => p.nome));
+  document.getElementById('statClientes').textContent = nomesUnicos.size;
   document.getElementById('dashPercent').textContent = pct + '%';
   document.getElementById('dashProgress').style.width = pct + '%';
 
