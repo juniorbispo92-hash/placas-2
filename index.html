@@ -1,39 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Avaliação Google</title>
-<style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#151a22;background:#f3f4f6;padding:24px 16px;box-sizing:border-box}
-main{max-width:380px;text-align:center;display:grid;gap:12px}
-.stars{font-size:28px;letter-spacing:6px;color:#f2a900}
-h1{margin:0;font-size:22px}
-p{margin:0;color:#5d6675}
-.code{font:13px ui-monospace,Menlo,monospace;color:#5d6675}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Avaliação Google</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .box {
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+    }
+    .stars {
+      font-size: 36px;
+      letter-spacing: 4px;
+      margin-bottom: 18px;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+    .msg {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .code-chip {
+      display: inline-block;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-family: monospace;
+      color: #64748b;
+      letter-spacing: 0.05em;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
-<main>
-  <div class="stars" aria-hidden="true">★★★★★</div>
-  <h1 id="t">Abrindo a avaliação…</h1>
-  <p id="m"></p>
-  <div class="code" id="c"></div>
-</main>
-<script>
-var id = (new URLSearchParams(location.search).get("p") || location.hash.replace(/^#/, "")).toUpperCase().replace(/[^A-Z0-9]/g, "");
-function show(t, m){ document.getElementById("t").textContent = t; document.getElementById("m").textContent = m; }
-if (id) document.getElementById("c").textContent = "Placa " + id;
-if (!id) show("Placa sem código", "Leia de novo o QR Code ou aproxime o celular da placa.");
-else fetch("placas.json?t=" + Date.now(), {cache: "no-store"})
-  .then(function(r){ if (!r.ok) throw 0; return r.json(); })
-  .then(function(m){
-    var d = m[id];
-    if (d && /^https:\/\//i.test(d)) location.replace(d);
-    else show("Placa ainda não ativada", "Esta placa ainda não foi ligada a nenhum negócio.");
-  })
-  .catch(function(){ show("Não foi possível abrir agora", "Verifique a internet e tente de novo em instantes."); });
-</script>
+  <div class="box" id="box">
+    <div class="spinner"></div>
+    <p class="msg">Carregando...</p>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://niozrlfufwihbrtsldbo.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_B8Z2TT6kNMEI7_H-XOTlHA_pfm7CcQ0';
+
+    function getCode() {
+      const params = new URLSearchParams(location.search);
+      const raw = params.get('p') || location.hash.replace('#', '');
+      return raw.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    }
+
+    function show(stars, title, msg, code) {
+      document.getElementById('box').innerHTML = `
+        ${stars ? `<div class="stars">${'⭐'.repeat(5)}</div>` : ''}
+        <div class="title">${title}</div>
+        <p class="msg">${msg}</p>
+        ${code ? `<span class="code-chip">${code}</span>` : ''}
+      `;
+    }
+
+    async function run() {
+      const code = getCode();
+
+      if (!code) {
+        show(false, 'QR Code inválido', 'Leia o QR Code novamente.', '');
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/placas?codigo=eq.${code}&select=url&limit=1`,
+          {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Cache-Control': 'no-cache'
+            }
+          }
+        );
+
+        if (!res.ok) throw new Error('erro');
+
+        const data = await res.json();
+
+        if (data.length > 0 && data[0].url && data[0].url.startsWith('https://')) {
+          window.location.replace(data[0].url);
+        } else {
+          show(true, 'Placa ainda não ativada',
+            'Esta placa ainda não foi ligada a nenhum negócio.',
+            code);
+        }
+      } catch (e) {
+        show(false, 'Não foi possível abrir agora',
+          'Verifique sua conexão e tente novamente.',
+          code);
+      }
+    }
+
+    run();
+  </script>
 </body>
 </html>
