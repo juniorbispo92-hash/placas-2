@@ -75,9 +75,12 @@
 html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--fg); }
 
 .app {
-  display: flex;
+  display: none;
   height: 100%;
   min-height: 100%;
+}
+.app:not([hidden]) {
+  display: flex;
 }
 
 /* SIDEBAR */
