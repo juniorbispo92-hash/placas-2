@@ -1,128 +1,149 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <title>Avaliação Google</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #fff;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .box {
-      text-align: center;
-      max-width: 360px;
-      width: 100%;
-    }
-    .stars {
-      font-size: 36px;
-      letter-spacing: 4px;
-      margin-bottom: 18px;
-    }
-    .title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-    }
-    .msg {
-      font-size: 15px;
-      color: #555;
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
-    .code-chip {
-      display: inline-block;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 4px 12px;
-      font-size: 13px;
-      font-family: monospace;
-      color: #64748b;
-      letter-spacing: 0.05em;
-    }
-    .spinner {
-      width: 32px; height: 32px;
-      border: 3px solid #e2e8f0;
-      border-top-color: #2563eb;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoVibe Avalie</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    text-align: center;
+  }
+  .logo {
+    width: 56px; height: 56px;
+    background: #2563eb;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  h1 { font-size: 20px; font-weight: 700; }
+  p { font-size: 14px; color: #94a3b8; max-width: 280px; line-height: 1.6; }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid #334155;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box {
+    background: #450a0a; color: #fca5a5;
+    border: 1px solid #dc2626;
+    border-radius: 12px; padding: 16px 20px;
+    font-size: 13px; max-width: 300px; display: none;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #2563eb; color: #fff;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    text-decoration: none; margin-top: 8px;
+    display: none;
+  }
+  .home-content { display: none; }
+  .home-content h1 { font-size: 28px; margin-bottom: 8px; }
+  .home-content p { font-size: 16px; }
+  .home-content .btn { display: inline-flex; margin-top: 16px; }
+</style>
 </head>
 <body>
-  <div class="box" id="box">
-    <div class="spinner"></div>
-    <p class="msg">Carregando...</p>
+
+  <!-- Estado: redirecionando (padrão) -->
+  <div id="redirectState">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+        <path d="M5 12.5a7 7 0 0 1 7-7"/>
+        <path d="M5 16.5a11 11 0 0 1 11-11"/>
+        <circle cx="5" cy="12.5" r="1.5" fill="#fff" stroke="none"/>
+      </svg>
+    </div>
+    <h1 id="titleText">Redirecionando...</h1>
+    <div class="spinner" id="spinner"></div>
+    <p id="msg">Buscando link de avaliação, aguarde um momento.</p>
+    <div class="error-box" id="errorBox"></div>
+    <a href="https://neovibeavalie.com.br" class="btn" id="homeBtn">← Voltar ao início</a>
   </div>
 
-  <script>
-    const SUPABASE_URL = 'https://niozrlfufwihbrtsldbo.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_B8Z2TT6kNMEI7_H-XOTlHA_pfm7CcQ0';
+  <!-- Estado: página inicial (sem parâmetro ?p=) -->
+  <div class="home-content" id="homeState">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+        <path d="M5 12.5a7 7 0 0 1 7-7"/>
+        <path d="M5 16.5a11 11 0 0 1 11-11"/>
+        <circle cx="5" cy="12.5" r="1.5" fill="#fff" stroke="none"/>
+      </svg>
+    </div>
+    <h1>NeoVibe Avalie</h1>
+    <p>Sistema de gestão de placas NFC e QR Code para avaliações Google.</p>
+    <a href="/painel.html" class="btn" style="display:inline-flex">Acessar Painel →</a>
+  </div>
 
-    function getCode() {
-      const params = new URLSearchParams(location.search);
-      const raw = params.get('p') || location.hash.replace('#', '');
-      return raw.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+<script>
+const SUPABASE_URL = 'https://niozrlfufwihbrtsldbo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_B8Z2TT6kNMEI7_H-XOTlHA_pfm7CcQ0';
+
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  // Suporta ?p=CODIGO e também ?c=CODIGO por compatibilidade
+  const codigo = (params.get('p') || params.get('c') || '').toUpperCase();
+
+  if (!codigo) {
+    // Sem parâmetro: mostra página inicial
+    document.getElementById('redirectState').style.display = 'none';
+    document.getElementById('homeState').style.display = 'flex';
+    document.getElementById('homeState').style.flexDirection = 'column';
+    document.getElementById('homeState').style.alignItems = 'center';
+    return;
+  }
+
+  // Com parâmetro: faz redirecionamento
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/placas?codigo=eq.${encodeURIComponent(codigo)}&select=url,codigo&limit=1`,
+      { headers: { 'apikey': SUPABASE_KEY } }
+    );
+    const data = await res.json();
+
+    if (!data || !data.length) {
+      showError(`Placa "${codigo}" não encontrada.`);
+      return;
     }
 
-    function show(stars, title, msg, code) {
-      document.getElementById('box').innerHTML = `
-        ${stars ? `<div class="stars">${'⭐'.repeat(5)}</div>` : ''}
-        <div class="title">${title}</div>
-        <p class="msg">${msg}</p>
-        ${code ? `<span class="code-chip">${code}</span>` : ''}
-      `;
+    const url = data[0].url;
+    if (!url) {
+      showError(`Esta placa (${codigo}) ainda não tem link de avaliação configurado.`);
+      return;
     }
 
-    async function run() {
-      const code = getCode();
+    document.getElementById('msg').textContent = 'Abrindo avaliação Google...';
+    window.location.href = url;
 
-      if (!code) {
-        show(false, 'QR Code inválido', 'Leia o QR Code novamente.', '');
-        return;
-      }
+  } catch (e) {
+    showError('Erro ao buscar placa: ' + e.message);
+  }
+}
 
-      try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/placas?codigo=eq.${code}&select=url&limit=1`,
-          {
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Cache-Control': 'no-cache'
-            }
-          }
-        );
+function showError(msg) {
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('msg').style.display = 'none';
+  document.getElementById('titleText').textContent = 'Ops!';
+  const box = document.getElementById('errorBox');
+  box.textContent = msg;
+  box.style.display = 'block';
+  document.getElementById('homeBtn').style.display = 'inline-flex';
+}
 
-        if (!res.ok) throw new Error('erro');
-
-        const data = await res.json();
-
-        if (data.length > 0 && data[0].url && data[0].url.startsWith('https://')) {
-          window.location.replace(data[0].url);
-        } else {
-          show(true, 'Placa ainda não ativada',
-            'Esta placa ainda não foi ligada a nenhum negócio.',
-            code);
-        }
-      } catch (e) {
-        show(false, 'Não foi possível abrir agora',
-          'Verifique sua conexão e tente novamente.',
-          code);
-      }
-    }
-
-    run();
-  </script>
+init();
+</script>
 </body>
 </html>
