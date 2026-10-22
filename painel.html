@@ -909,12 +909,16 @@ function doLogout() {
   currentUser = null;
   lsSet('gn_user', null);
   placas = []; clientes = [];
+  document.getElementById('appShell').style.display = 'none';
   document.getElementById('appShell').hidden = true;
+  document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('authScreen').hidden = false;
 }
 
 async function enterApp() {
+  document.getElementById('authScreen').style.display = 'none';
   document.getElementById('authScreen').hidden = true;
+  document.getElementById('appShell').style.display = 'flex';
   document.getElementById('appShell').hidden = false;
   const name = currentUser.user_metadata?.name || currentUser.name || currentUser.email.split('@')[0];
   const initial = name[0].toUpperCase();
