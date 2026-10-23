@@ -11,7 +11,6 @@
 <p>Abrindo...</p>
 <script>
 (async function() {
-  // Pega o código da URL: /?p=CODIGO ou /#CODIGO
   var params = new URLSearchParams(location.search);
   var id = (params.get('p') || location.hash.replace(/#/, '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
 
@@ -20,14 +19,9 @@
   try {
     var res = await fetch('/placas.json?_=' + Date.now());
     var placas = await res.json();
-    // Suporta array direto ou objeto com propriedade
-    var lista = Array.isArray(placas) ? placas : (placas.placas || Object.values(placas));
-    var placa = lista.find(function(p) {
-      return (p.id || p.codigo || p.code || '').toUpperCase() === id;
-    });
-    if (!placa) { document.querySelector('p').textContent = 'Placa "' + id + '" não encontrada.'; return; }
-    var url = placa.url || placa.link || placa.destino || placa.href || '';
-    if (!url) { document.querySelector('p').textContent = 'Esta placa ainda não tem link configurado.'; return; }
+    // Formato: { "CODIGO": "https://..." }
+    var url = placas[id] || placas[id.toLowerCase()] || '';
+    if (!url) { document.querySelector('p').textContent = 'Placa "' + id + '" não encontrada.'; return; }
     location.replace(url);
   } catch(e) {
     document.querySelector('p').textContent = 'Erro ao buscar placa.';
