@@ -627,7 +627,7 @@ async function sb(method, path, body) {
   const headers = {
     'apikey': SUPABASE_KEY,
     'Content-Type': 'application/json',
-    'Prefer': 'return=representation'
+    'Prefer': method === 'PATCH' || method === 'DELETE' ? 'return=minimal' : 'return=representation'
   };
   if (currentUser?.access_token) headers['Authorization'] = 'Bearer ' + currentUser.access_token;
   const res = await fetch(SUPABASE_URL + path, {
