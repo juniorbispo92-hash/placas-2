@@ -94,8 +94,12 @@ const SUPABASE_KEY = 'sb_publishable_B8Z2TT6kNMEI7_H-XOTlHA_pfm7CcQ0';
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  // Suporta ?p=CODIGO e também ?c=CODIGO por compatibilidade
-  const codigo = (params.get('p') || params.get('c') || '').toUpperCase();
+  // Suporta ?p=CODIGO, ?c=CODIGO e /CODIGO direto na URL
+  let codigo = (params.get('p') || params.get('c') || '').toUpperCase();
+  if (!codigo) {
+    const path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '');
+    if (path && path !== 'index') codigo = path.toUpperCase();
+  }
 
   if (!codigo) {
     // Sem parâmetro: mostra página inicial
