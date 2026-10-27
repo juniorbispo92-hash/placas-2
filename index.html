@@ -13,13 +13,23 @@
 (async function() {
   var params = new URLSearchParams(location.search);
   var id = (params.get('p') || location.hash.replace(/#/, '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
-
   if (!id) { document.querySelector('p').textContent = 'Código não encontrado.'; return; }
-
   try {
+    /* 1. Verifica contatos.json — se existir, abre página de contato */
+    try {
+      var rc = await fetch('/contatos.json?_=' + Date.now());
+      if (rc.ok) {
+        var contatos = await rc.json();
+        if (contatos[id]) {
+          location.replace('/conecte.html?p=' + id);
+          return;
+        }
+      }
+    } catch(e) { /* contatos.json não existe ainda — continua */ }
+
+    /* 2. Fallback: placas.json — redireciona direto ao Google */
     var res = await fetch('/placas.json?_=' + Date.now());
     var placas = await res.json();
-    // Formato: { "CODIGO": "https://..." }
     var url = placas[id] || placas[id.toLowerCase()] || '';
     if (!url) { document.querySelector('p').textContent = 'Placa "' + id + '" não encontrada.'; return; }
     location.replace(url);
