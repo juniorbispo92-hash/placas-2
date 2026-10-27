@@ -283,6 +283,7 @@ body {
 
   var placa;
   if (!id) {
+    // sem código na URL: mostra demo
     placa = { google:'#', instagram:'@suaLoja', whatsapp:'85999999999', wifi_nome:'MinhaRede', wifi_senha:'suasenha' };
   } else {
     try {
@@ -292,6 +293,7 @@ body {
     } catch(e) { placa = null; }
 
     if (!placa) {
+      // fallback: placas.json → redireciona direto ao Google
       try {
         var r2 = await fetch('/placas.json?_=' + Date.now());
         var placas = await r2.json();
