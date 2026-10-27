@@ -281,44 +281,25 @@ body {
 
   var btns = document.getElementById('btns');
 
-  // DEMO: usa dados de exemplo quando não há servidor (preview/teste)
   var placa;
   if (!id) {
-    // sem código na URL: mostra demo com todos os botões
-    placa = {
-      google: '#',
-      instagram: '@suaLoja',
-      whatsapp: '85999999999',
-      wifi_nome: 'MinhaRede',
-      wifi_senha: 'suasenha'
-    };
+    placa = { google:'#', instagram:'@suaLoja', whatsapp:'85999999999', wifi_nome:'MinhaRede', wifi_senha:'suasenha' };
   } else {
-    var dados;
     try {
       var res = await fetch('/contatos.json?_=' + Date.now());
-      dados = await res.json();
-    } catch(e) {
-      // sem servidor: mostra demo
-      placa = {
-        google: '#',
-        instagram: '@suaLoja',
-        whatsapp: '85999999999',
-        wifi_nome: 'MinhaRede',
-        wifi_senha: 'suasenha'
-      };
-    }
+      var dados = await res.json();
+      placa = dados[id] || dados[id.toLowerCase()] || null;
+    } catch(e) { placa = null; }
+
     if (!placa) {
-      placa = dados[id] || dados[id.toLowerCase()];
-      if (!placa) {
-        try {
-          var r2 = await fetch('/placas.json?_=' + Date.now());
-          var placas = await r2.json();
-          var url = placas[id] || placas[id.toLowerCase()];
-          if (url) { location.replace(url); return; }
-        } catch(e2){}
-        btns.innerHTML = '<p class="status" style="grid-column:1/-1">Placa "' + id + '" não encontrada.</p>';
-        return;
-      }
+      try {
+        var r2 = await fetch('/placas.json?_=' + Date.now());
+        var placas = await r2.json();
+        var url = placas[id] || placas[id.toLowerCase()];
+        if (url) { location.replace(url); return; }
+      } catch(e2) {}
+      btns.innerHTML = '<p class="status" style="grid-column:1/-1">Placa "' + id + '" não encontrada.</p>';
+      return;
     }
   }
 
