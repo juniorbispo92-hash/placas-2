@@ -16,12 +16,12 @@
   "wifi_senha": ""
  },
  "FNSPCG": {
-  "google": "",
-  "instagram": "",
-  "whatsapp": "",
-  "whatsapp_msg": "Olá! Vi sua placa NFC.",
-  "wifi_nome": "",
-  "wifi_senha": ""
+  "google": "https://search.google.com/local/writereview?placeid=ChIJGbR1aPMTEAcR6CUUZK16LAg",
+  "instagram": "@marcosjunior231",
+  "whatsapp": "79999194379",
+  "whatsapp_msg": "Olá",
+  "wifi_nome": "Marcos",
+  "wifi_senha": "12345668"
  },
  "2ME75Z": {
   "google": "",
