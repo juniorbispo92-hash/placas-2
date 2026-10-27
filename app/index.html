@@ -546,8 +546,20 @@ root.addEventListener("submit",function(e){
     saveAccess(u2,p1).then(function(){busy=false;ui.pass=false;render();toast("Usuário e senha salvos ✔ Valem em 1–2 minutos em outros celulares.")},function(err){busy=false;ui.error=(err&&(err.status===401||err.status===403))?"O GitHub recusou o token. Saia e entre de novo com um token novo.":"Não foi possível salvar. Verifique a internet.";render()});
   }else if(f.id==="edit"){
     ui.error="";
-    var proVisible=document.getElementById("pro-fields")&&!document.getElementById("pro-fields").hidden;
-    var contatos={instagram:proVisible?(document.getElementById("f-instagram")||{value:""}).value:"",whatsapp:proVisible?(document.getElementById("f-whatsapp")||{value:""}).value:"",whatsapp_msg:proVisible?(document.getElementById("f-whatsapp-msg")||{value:""}).value:"Olá! Vi sua placa NFC.":"Olá! Vi sua placa NFC.",wifi_nome:proVisible?(document.getElementById("f-wifi-nome")||{value:""}).value:"",wifi_senha:proVisible?(document.getElementById("f-wifi-senha")||{value:""}).value:""};
+    var proFields=document.getElementById("pro-fields");
+    var proVisible=proFields&&!proFields.hidden;
+    var fIg=document.getElementById("f-instagram");
+    var fWa=document.getElementById("f-whatsapp");
+    var fWm=document.getElementById("f-whatsapp-msg");
+    var fWn=document.getElementById("f-wifi-nome");
+    var fWs=document.getElementById("f-wifi-senha");
+    var contatos={
+      instagram: proVisible&&fIg ? fIg.value : "",
+      whatsapp: proVisible&&fWa ? fWa.value : "",
+      whatsapp_msg: proVisible&&fWm ? fWm.value : "Ola! Vi sua placa NFC.",
+      wifi_nome: proVisible&&fWn ? fWn.value : "",
+      wifi_senha: proVisible&&fWs ? fWs.value : ""
+    };
     saveLink(f.dataset.id,document.getElementById("f-client").value,document.getElementById("f-dest").value,document.getElementById("f-note").value,contatos)
       .then(function(d){ui.open=null;render();toast(d&&d.empty?"Link removido. Em 1–2 min a placa fica livre.":"Salvo ✔ Em 1–2 min o QR já leva à avaliação.")},function(err){if(err&&err.msg){var m=document.getElementById("dest-msg");if(m){m.textContent=err.msg;m.style.color="var(--bad)"}}});
   }else if(f.id==="gen"){
