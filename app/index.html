@@ -254,11 +254,18 @@ function saveLink(id,client,dest,note,contatos){
     }).then(function(){return r},function(){return r});/* ignora erro de contatos.json */
   });
 }
-function removePlate(id){
+function clearClient(id){
   return commit(function(){
-    if(!byId.has(id))return false;
-    S.plates=S.plates.filter(function(p){return p.id!==id});byId.delete(id);return true;
-  },"Excluir placa "+id);
+    var p=byId.get(id);if(!p)return false;
+    p.dest="";p.client="";p.note="";p.u=now();return true;
+  },"Placa "+id+": cliente removido (placa fica livre)").then(function(r){
+    /* limpa contatos.json para essa placa */
+    return getFile("contatos.json").then(function(cf){
+      var c={};try{c=cf.text?JSON.parse(cf.text):{}}catch(x){}
+      c[id]={google:"",instagram:"",whatsapp:"",whatsapp_msg:"Olá! Vi sua placa NFC.",wifi_nome:"",wifi_senha:""};
+      return putFile("contatos.json",JSON.stringify(c,null,1),cf.sha,"Placa "+id+": contatos limpos");
+    }).then(function(){return r},function(){return r});
+  });
 }
 function generate(qty,label){
   qty=Math.max(1,Math.min(500,parseInt(qty,10)||0));
@@ -437,8 +444,8 @@ function sheetView(p){
    +(ui.error?'<div class="notice bad">'+esc(ui.error)+'</div>':'')
    +'<div class="actions"><button class="btn primary" type="submit"'+(busy?' disabled':'')+'>'+(busy?'Salvando…':'Salvar')+'</button><button class="btn" type="button" data-act="close">Fechar</button></div>'
    +'<div style="margin-top:14px">'+(ui.confirmDel
-       ?'<div class="notice warn"><b>Excluir a placa '+p.id+'?</b> Ela some da lista'+(p.dest?' e o QR deixa de levar à avaliação de '+esc(p.client||'cliente')+'':'')+'. Se ela já foi impressa, o QR vai mostrar "Placa ainda não ativada". Isso não pode ser desfeito.</div><div class="actions"><button type="button" class="btn danger" data-act="del-yes" data-id="'+p.id+'"'+(busy?' disabled':'')+'>'+(busy?'Excluindo…':'Sim, excluir')+'</button><button type="button" class="btn" data-act="del-no">Cancelar</button></div>'
-       :'<button type="button" class="btn danger block" data-act="del">Excluir placa</button>')+'</div>'
+       ?'<div class="notice warn"><b>Remover cliente da placa '+p.id+'?</b> O cliente'+(p.client?' <b>'+esc(p.client)+'</b>':'')+' será desvinculado e a placa ficará <b>Livre</b> para outro cliente. O QR e o NFC continuam funcionando.</div><div class="actions"><button type="button" class="btn danger" data-act="del-yes" data-id="'+p.id+'"'+(busy?' disabled':'')+'>'+(busy?'Removendo…':'Sim, remover cliente')+'</button><button type="button" class="btn" data-act="del-no">Cancelar</button></div>'
+       :'<button type="button" class="btn danger block" data-act="del">Remover cliente</button>')+'</div>'
    +'<p class="hint">Criada '+fmt(p.c)+' · Atualizada '+fmt(p.u)+(p.batch?' · Lote: '+esc(p.batch):'')+'</p>'
    +(p.hist&&p.hist.length?'<p class="hint">Links anteriores: '+p.hist.map(function(x){return esc(x.d)}).join(" · ")+'</p>':'')
    +'</form></div></div>';
@@ -480,7 +487,7 @@ root.addEventListener("click",function(e){
   if(a==="close"||a==="close-bg"){ui.open=null;ui.error="";ui.confirmDel=false;render()}
   else if(a==="del"){ui.confirmDel=true;render()}
   else if(a==="del-no"){ui.confirmDel=false;render()}
-  else if(a==="del-yes"){var did=t.dataset.id;removePlate(did).then(function(){ui.open=null;ui.confirmDel=false;ui.lastBatch=ui.lastBatch.filter(function(x){return x!==did});try{localStorage.setItem("last-batch",JSON.stringify(ui.lastBatch))}catch(x){}render();toast("Placa "+did+" excluída")},function(){})}
+  else if(a==="del-yes"){var did=t.dataset.id;clearClient(did).then(function(){ui.open=null;ui.confirmDel=false;render();toast("Cliente removido. Placa "+did+" está Livre ✔")},function(){})}
   else if(a==="prev"||a==="next"){ui.page+=a==="next"?1:-1;render();window.scrollTo(0,0)}
   else if(a==="copy"){var tx=t.dataset.text;(navigator.clipboard?navigator.clipboard.writeText(tx):Promise.reject()).then(function(){toast("Link copiado")},function(){toast("Segure o link para copiar")})}
   else if(a==="nfc")writeNfc(t.dataset.text);
