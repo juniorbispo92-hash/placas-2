@@ -15,19 +15,20 @@
   var id = (params.get('p') || location.hash.replace(/#/, '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (!id) { document.querySelector('p').textContent = 'Código não encontrado.'; return; }
   try {
-    /* 1. Verifica contatos.json — se existir, abre página de contato */
+    // 1. Verifica contatos.json — só redireciona se tiver pelo menos google OU instagram OU whatsapp preenchido
     try {
       var rc = await fetch('/contatos.json?_=' + Date.now());
       if (rc.ok) {
         var contatos = await rc.json();
-        if (contatos[id]) {
+        var c = contatos[id] || contatos[id.toLowerCase()];
+        if (c && (c.google || c.instagram || c.whatsapp || c.wifi_nome)) {
           location.replace('/conecte.html?p=' + id);
           return;
         }
       }
-    } catch(e) { /* contatos.json não existe ainda — continua */ }
+    } catch(e) {}
 
-    /* 2. Fallback: placas.json — redireciona direto ao Google */
+    // 2. Fallback: placas.json — redireciona direto ao Google
     var res = await fetch('/placas.json?_=' + Date.now());
     var placas = await res.json();
     var url = placas[id] || placas[id.toLowerCase()] || '';
