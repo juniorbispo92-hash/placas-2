@@ -1,1 +1,411 @@
 
+<title>Conecte-se Conosco</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap">
+
+<style>
+/* Layout: cartão centralizado em tela cheia, degradê da placa */
+:root {
+  --grad: linear-gradient(135deg, #e84318 0%, #d4320f 20%, #c2420f 40%, #7c3ab0 70%, #2c4fcf 100%);
+  --gold: #f5c842;
+  --gold-dark: #b8940f;
+  --gold-border: linear-gradient(135deg, #ffe066, #c9960a, #ffe066, #c9960a);
+  --btn-glass: rgba(255,255,255,0.18);
+  --btn-glass-hover: rgba(255,255,255,0.28);
+  --shadow: 0 8px 32px rgba(0,0,0,0.38);
+  --text-white: #fff;
+  --text-sub: rgba(255,255,255,0.82);
+  color-scheme: dark;
+}
+
+/* single-theme: deliberate dark/vivid, no dark blocks needed */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100%;
+  background: var(--grad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  font-family: 'Nunito', system-ui, sans-serif;
+  color: var(--text-white);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.10);
+  border-radius: 28px;
+  border: 2.5px solid rgba(245,200,66,0.55);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), var(--shadow), 0 0 60px rgba(210,80,10,0.25);
+  padding: 32px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* NFC icon */
+.nfc-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, #2a2a2a, #111);
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 0 3px rgba(245,200,66,0.22), 0 6px 20px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  flex-shrink: 0;
+}
+
+/* Title */
+.title-conecte {
+  font-size: clamp(26px, 7vw, 34px);
+  font-weight: 900;
+  color: #fff;
+  text-align: center;
+  line-height: 1.1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  letter-spacing: -0.5px;
+  text-wrap: balance;
+}
+.title-conosco {
+  font-size: clamp(30px, 8vw, 40px);
+  font-weight: 900;
+  color: var(--gold);
+  text-align: center;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.35), 0 0 24px rgba(245,200,66,0.3);
+  text-wrap: balance;
+  margin-bottom: 28px;
+}
+
+/* Divider */
+.divider {
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(245,200,66,0.6), transparent);
+  margin-bottom: 24px;
+}
+
+/* Buttons grid */
+.btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 10px 14px;
+  border-radius: 18px;
+  background: var(--btn-glass);
+  border: 1.5px solid rgba(245,200,66,0.45);
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.22);
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.btn:hover, .btn:focus-visible {
+  background: var(--btn-glass-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.32);
+}
+.btn:active { transform: scale(0.96); }
+
+.btn svg { flex-shrink: 0; }
+.btn-label { letter-spacing: 0.3px; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+
+/* Wi-Fi modal overlay */
+.wifi-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.wifi-sheet {
+  background: linear-gradient(160deg, #1a1a2e, #16213e);
+  border: 1.5px solid rgba(245,200,66,0.4);
+  border-radius: 24px 24px 16px 16px;
+  padding: 28px 24px 32px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.wifi-sheet h3 {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--gold);
+  text-align: center;
+}
+.wifi-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wifi-row label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.wifi-value {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  word-break: break-all;
+}
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245,200,66,0.15);
+  border: 1px solid rgba(245,200,66,0.5);
+  border-radius: 10px;
+  color: var(--gold);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 10px 16px;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.copy-btn:hover { background: rgba(245,200,66,0.25); }
+.close-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.7);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s;
+}
+.close-btn:hover { background: rgba(255,255,255,0.18); }
+
+/* Loading / error states */
+.status {
+  text-align: center;
+  color: rgba(255,255,255,0.75);
+  font-size: 15px;
+  padding: 16px 0;
+}
+</style>
+
+<div class="card">
+  <div class="nfc-ring">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f5c842" stroke-width="2.2" stroke-linecap="round">
+      <path d="M5 12.5a7 7 0 0 1 7-7"/>
+      <path d="M5 16.5a11 11 0 0 1 11-11"/>
+      <circle cx="5" cy="12.5" r="1.5" fill="#f5c842" stroke="none"/>
+    </svg>
+  </div>
+
+  <p class="title-conecte">Conecte-se</p>
+  <p class="title-conosco">conosco</p>
+
+  <div class="divider"></div>
+
+  <div class="btns" id="btns">
+    <p class="status" style="grid-column:1/-1">Carregando...</p>
+  </div>
+</div>
+
+<!-- Wi-Fi sheet (hidden until tapped) -->
+<div class="wifi-overlay" id="wifiOverlay" hidden>
+  <div class="wifi-sheet">
+    <h3>📶 Wi-Fi</h3>
+    <div class="wifi-row">
+      <label>Rede</label>
+      <span class="wifi-value" id="wifiName">–</span>
+    </div>
+    <div class="wifi-row">
+      <label>Senha</label>
+      <span class="wifi-value" id="wifiPass">–</span>
+    </div>
+    <button class="copy-btn" id="copySenha">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copiar senha
+    </button>
+    <button class="close-btn" id="closeWifi">Fechar</button>
+  </div>
+</div>
+
+<script>
+(async function() {
+  var params = new URLSearchParams(location.search);
+  var id = (params.get('p') || location.hash.replace(/#/,'')).toUpperCase().replace(/[^A-Z0-9]/g,'');
+
+  var btns = document.getElementById('btns');
+
+  var placa;
+  if (!id) {
+    // sem código na URL: mostra demo
+    placa = { google:'#', instagram:'@suaLoja', whatsapp:'85999999999', wifi_nome:'MinhaRede', wifi_senha:'suasenha' };
+  } else {
+    try {
+      var res = await fetch('/contatos.json?_=' + Date.now());
+      var dados = await res.json();
+      placa = dados[id] || dados[id.toLowerCase()] || null;
+    } catch(e) { placa = null; }
+
+    if (!placa) {
+      // fallback: placas.json → redireciona direto ao Google
+      try {
+        var r2 = await fetch('/placas.json?_=' + Date.now());
+        var placas = await r2.json();
+        var url = placas[id] || placas[id.toLowerCase()];
+        if (url) { location.replace(url); return; }
+      } catch(e2) {}
+      btns.innerHTML = '<p class="status" style="grid-column:1/-1">Placa "' + id + '" não encontrada.</p>';
+      return;
+    }
+  }
+
+  // Monta botões conforme dados disponíveis
+  var html = '';
+
+  // Google
+  if (placa.google) {
+    html += `
+    <a class="btn" href="${placa.google}" target="_blank" rel="noopener">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#EA4335"/>
+        <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+      </svg>
+      <span class="btn-label">Avaliação</span>
+    </a>`;
+  }
+
+  // Instagram
+  if (placa.instagram) {
+    var igUrl = placa.instagram.startsWith('http') ? placa.instagram : 'https://instagram.com/' + placa.instagram.replace('@','');
+    html += `
+    <a class="btn" href="${igUrl}" target="_blank" rel="noopener">
+      <svg width="28" height="28" viewBox="0 0 24 24">
+        <defs>
+          <radialGradient id="ig1" cx="30%" cy="107%" r="150%">
+            <stop offset="0%" stop-color="#fdf497"/>
+            <stop offset="5%" stop-color="#fdf497"/>
+            <stop offset="45%" stop-color="#fd5949"/>
+            <stop offset="60%" stop-color="#d6249f"/>
+            <stop offset="90%" stop-color="#285AEB"/>
+          </radialGradient>
+        </defs>
+        <rect width="24" height="24" rx="6" fill="url(#ig1)"/>
+        <circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="1.8"/>
+        <circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/>
+      </svg>
+      <span class="btn-label">Instagram</span>
+    </a>`;
+  }
+
+  // WhatsApp
+  if (placa.whatsapp) {
+    var num = placa.whatsapp.replace(/\D/g,'');
+    if (!num.startsWith('55')) num = '55' + num;
+    var msg = encodeURIComponent(placa.whatsapp_msg || '');
+    var waUrl = 'https://wa.me/' + num + (msg ? '?text=' + msg : '');
+    html += `
+    <a class="btn" href="${waUrl}" target="_blank" rel="noopener">
+      <svg width="28" height="28" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="#25D366"/>
+        <path fill="#fff" d="M17.5 14.4c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1-.2.2-.3.2-.6.1-.9-.5-1.8-1-2.5-1.7-.6-.7-1.2-1.5-1.4-2.1-.1-.3 0-.5.1-.6l.5-.5c.1-.2.2-.4.2-.6 0-.2-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.6c-.2 0-.5.1-.8.4-.7.7-.7 1.8.1 3 .2.3 1.7 2.6 4.1 3.7.6.2 1.1.4 1.4.5.6.2 1.1.1 1.6-.1.5-.3.9-.7 1-.8.2-.4.2-.8.1-1.1z"/>
+      </svg>
+      <span class="btn-label">WhatsApp</span>
+    </a>`;
+  }
+
+  // Wi-Fi
+  if (placa.wifi_nome) {
+    html += `
+    <button class="btn" id="wifiBtn">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+        <path d="M5 12.5a9.5 9.5 0 0 1 14 0"/>
+        <path d="M8.5 16a5 5 0 0 1 7 0"/>
+        <circle cx="12" cy="19.5" r="1.2" fill="#fff" stroke="none"/>
+      </svg>
+      <span class="btn-label">Wi-Fi</span>
+    </button>`;
+  }
+
+  if (!html) {
+    btns.innerHTML = '<p class="status" style="grid-column:1/-1">Nenhum contato configurado.</p>';
+    return;
+  }
+
+  btns.innerHTML = html;
+
+  // Wi-Fi modal
+  if (placa.wifi_nome) {
+    document.getElementById('wifiBtn').addEventListener('click', function() {
+      document.getElementById('wifiName').textContent = placa.wifi_nome;
+      document.getElementById('wifiPass').textContent = placa.wifi_senha || '(sem senha)';
+      document.getElementById('wifiOverlay').hidden = false;
+    });
+    document.getElementById('closeWifi').addEventListener('click', function() {
+      document.getElementById('wifiOverlay').hidden = true;
+    });
+    document.getElementById('copySenha').addEventListener('click', function() {
+      var btn = this;
+      navigator.clipboard.writeText(placa.wifi_senha || '').then(function() {
+        btn.textContent = '✓ Copiado!';
+        setTimeout(function(){ btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar senha'; }, 2000);
+      }).catch(function() {
+        // fallback: seleciona o texto
+        var range = document.createRange();
+        range.selectNode(document.getElementById('wifiPass'));
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+      });
+    });
+    document.getElementById('wifiOverlay').addEventListener('click', function(e) {
+      if (e.target === this) this.hidden = true;
+    });
+  }
+})();
+</script>
