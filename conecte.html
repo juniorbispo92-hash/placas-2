@@ -51,19 +51,51 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* NFC icon */
-.nfc-ring {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 38%, #2a2a2a, #111);
-  border: 3px solid var(--gold);
-  box-shadow: 0 0 0 3px rgba(245,200,66,0.22), 0 6px 20px rgba(0,0,0,0.5);
+/* Hero icon */
+.hero-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.hero-coin {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2a2a2a, #0d0d0d);
+  border: 3.5px solid var(--gold);
+  box-shadow: 0 0 0 3px rgba(245,200,66,0.18), 0 0 30px rgba(245,160,10,0.45), 0 8px 24px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  position: relative;
+}
+/* Ondas */
+.hero-waves {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+.hero-waves-r {
+  align-items: flex-start;
+  transform: scaleX(-1);
+}
+.wave {
+  display: block;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+  animation: wavepulse 1.6s ease-in-out infinite;
+}
+.w1 { width: 18px; animation-delay: 0s; }
+.w2 { width: 26px; animation-delay: 0.2s; }
+.w3 { width: 14px; animation-delay: 0.4s; }
+@keyframes wavepulse {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 /* Title */
@@ -87,6 +119,18 @@ body {
   text-shadow: 0 2px 10px rgba(0,0,0,0.35), 0 0 24px rgba(245,200,66,0.3);
   text-wrap: balance;
   margin-bottom: 28px;
+}
+
+/* Subtítulo */
+.title-sub {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+  margin-top: 4px;
+  margin-bottom: 20px;
 }
 
 /* Divider */
@@ -237,18 +281,7 @@ body {
 </style>
 
 <div class="card">
-  <div class="nfc-ring">
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f5c842" stroke-width="2.2" stroke-linecap="round">
-      <path d="M5 12.5a7 7 0 0 1 7-7"/>
-      <path d="M5 16.5a11 11 0 0 1 11-11"/>
-      <circle cx="5" cy="12.5" r="1.5" fill="#f5c842" stroke="none"/>
-    </svg>
-  </div>
-
-  <p class="title-conecte">Conecte-se</p>
-  <p class="title-conosco">conosco</p>
-
-  <div class="divider"></div>
+  <img src="/Conecte-se%20Conosco_%20Energia%20e%20Conex%C3%A3o.png" alt="Conecte-se Conosco" style="width:100%;max-width:420px;border-radius:18px;margin-bottom:8px;display:block">
 
   <div class="btns" id="btns">
     <p class="status" style="grid-column:1/-1">Carregando...</p>
