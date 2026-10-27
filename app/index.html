@@ -422,6 +422,10 @@ function ajustesView(){
    +'<div class="card"><h2>Exportar</h2><div class="actions"><button class="btn" data-act="csv">CSV de todas as placas</button></div></div>'
    +'<div class="card"><h2>Como usar</h2><ol class="steps"><li><b>Gerar</b>: crie um lote e baixe a folha para impressão.</li><li>Grave o chip NFC de cada placa no painel dela (Android) ou com o NFC Tools.</li><li>Ao entregar, abra a placa, cole o link Google do cliente (use o botão ProductMate se precisar) e toque em <b>Salvar</b>.</li><li>Em 1 a 2 minutos o QR já leva direto à avaliação.</li></ol></div>';
 }
+function isPro(p){
+  var c=p.contato;
+  return !!(c&&(c.instagram||c.whatsapp||c.wifi_nome||c.wifi_senha));
+}
 function sheetView(p){
   var url=plateUrl(p.id);
   return '<div class="sheet" data-act="close-bg"><div class="panel" role="dialog" aria-label="Placa '+p.id+'">'
@@ -435,12 +439,18 @@ function sheetView(p){
    +'<div class="actions" style="margin-top:8px"><a class="btn" href="'+PRODUCTMATE+'" target="_blank" rel="noopener">Gerar link (ProductMate)</a>'+(p.dest?'<a class="btn" href="'+esc(p.dest)+'" target="_blank" rel="noopener">Testar link</a>':'')+'</div></div>'
    +'<div class="field"><label for="f-note">Nota interna</label><input type="text" id="f-note" value="'+esc(p.note||"")+'" placeholder="Ex.: entregue em 20/10"></div>'
    +'<hr style="border:none;border-top:1px solid var(--border,#e5e7eb);margin:16px 0">'
+   +'<div class="field"><label>Versão da placa</label><div style="display:flex;gap:8px">'
+   +'<button type="button" class="btn'+(isPro(p)?' primary':'')+'" id="btn-pro" data-act="set-pro" style="flex:1">⭐ Pro<br><small style="font-weight:400;font-size:11px">Google + Instagram + WhatsApp + Wi-Fi</small></button>'
+   +'<button type="button" class="btn'+(!isPro(p)?' primary':'')+'" id="btn-basic" data-act="set-basic" style="flex:1">Básica<br><small style="font-weight:400;font-size:11px">Vai direto para avaliação Google</small></button>'
+   +'</div></div>'
+   +'<div id="pro-fields"'+(isPro(p)?'':' hidden')+'>'
    +'<p class="hint" style="margin:0 0 12px;font-weight:600;color:var(--ink)">Botões da página de contato</p>'
    +'<div class="field"><label for="f-instagram">Instagram (opcional)</label><input type="text" id="f-instagram" value="'+esc((p.contato&&p.contato.instagram)||"")+'" placeholder="@nomedobusiness"></div>'
    +'<div class="field"><label for="f-whatsapp">WhatsApp (opcional)</label><input type="tel" id="f-whatsapp" value="'+esc((p.contato&&p.contato.whatsapp)||"")+'" placeholder="85999999999"></div>'
    +'<div class="field"><label for="f-whatsapp-msg">Mensagem padrão do WhatsApp</label><input type="text" id="f-whatsapp-msg" value="'+esc((p.contato&&p.contato.whatsapp_msg)||"")+'" placeholder="Olá! Vi sua placa NFC."></div>'
    +'<div class="field"><label for="f-wifi-nome">Nome da rede Wi-Fi (opcional)</label><input type="text" id="f-wifi-nome" value="'+esc((p.contato&&p.contato.wifi_nome)||"")+'" placeholder="MinhaRede"></div>'
    +'<div class="field"><label for="f-wifi-senha">Senha do Wi-Fi (opcional)</label><input type="text" id="f-wifi-senha" value="'+esc((p.contato&&p.contato.wifi_senha)||"")+'" placeholder="senha123"></div>'
+   +'</div>'
    +(ui.error?'<div class="notice bad">'+esc(ui.error)+'</div>':'')
    +'<div class="actions"><button class="btn primary" type="submit"'+(busy?' disabled':'')+'>'+(busy?'Salvando…':'Salvar')+'</button><button class="btn" type="button" data-act="close">Fechar</button></div>'
    +'<div style="margin-top:14px">'+(ui.confirmDel
@@ -485,6 +495,8 @@ root.addEventListener("click",function(e){
   var a=t.dataset.act;
   if(a==="close-bg"&&e.target!==t)return;
   if(a==="close"||a==="close-bg"){ui.open=null;ui.error="";ui.confirmDel=false;render()}
+  else if(a==="set-pro"){var pf=document.getElementById("pro-fields");var bp=document.getElementById("btn-pro");var bb=document.getElementById("btn-basic");if(pf){pf.hidden=false;bp.classList.add("primary");bb.classList.remove("primary")}}
+  else if(a==="set-basic"){var pf2=document.getElementById("pro-fields");var bp2=document.getElementById("btn-pro");var bb2=document.getElementById("btn-basic");if(pf2){pf2.hidden=true;bp2.classList.remove("primary");bb2.classList.add("primary")}}
   else if(a==="del"){ui.confirmDel=true;render()}
   else if(a==="del-no"){ui.confirmDel=false;render()}
   else if(a==="del-yes"){var did=t.dataset.id;clearClient(did).then(function(){ui.open=null;ui.confirmDel=false;render();toast("Cliente removido. Placa "+did+" está Livre ✔")},function(){})}
@@ -534,7 +546,8 @@ root.addEventListener("submit",function(e){
     saveAccess(u2,p1).then(function(){busy=false;ui.pass=false;render();toast("Usuário e senha salvos ✔ Valem em 1–2 minutos em outros celulares.")},function(err){busy=false;ui.error=(err&&(err.status===401||err.status===403))?"O GitHub recusou o token. Saia e entre de novo com um token novo.":"Não foi possível salvar. Verifique a internet.";render()});
   }else if(f.id==="edit"){
     ui.error="";
-    var contatos={instagram:document.getElementById("f-instagram").value,whatsapp:document.getElementById("f-whatsapp").value,whatsapp_msg:document.getElementById("f-whatsapp-msg").value,wifi_nome:document.getElementById("f-wifi-nome").value,wifi_senha:document.getElementById("f-wifi-senha").value};
+    var proVisible=document.getElementById("pro-fields")&&!document.getElementById("pro-fields").hidden;
+    var contatos={instagram:proVisible?(document.getElementById("f-instagram")||{value:""}).value:"",whatsapp:proVisible?(document.getElementById("f-whatsapp")||{value:""}).value:"",whatsapp_msg:proVisible?(document.getElementById("f-whatsapp-msg")||{value:""}).value:"Olá! Vi sua placa NFC.":"Olá! Vi sua placa NFC.",wifi_nome:proVisible?(document.getElementById("f-wifi-nome")||{value:""}).value:"",wifi_senha:proVisible?(document.getElementById("f-wifi-senha")||{value:""}).value:""};
     saveLink(f.dataset.id,document.getElementById("f-client").value,document.getElementById("f-dest").value,document.getElementById("f-note").value,contatos)
       .then(function(d){ui.open=null;render();toast(d&&d.empty?"Link removido. Em 1–2 min a placa fica livre.":"Salvo ✔ Em 1–2 min o QR já leva à avaliação.")},function(err){if(err&&err.msg){var m=document.getElementById("dest-msg");if(m){m.textContent=err.msg;m.style.color="var(--bad)"}}});
   }else if(f.id==="gen"){
