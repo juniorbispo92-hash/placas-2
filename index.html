@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Avaliação Google</title>
+<title>Avaliacao Google</title>
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;font:16px system-ui,sans-serif;color:#5d6675}</style>
 </head>
 <body>
@@ -13,26 +13,26 @@
 (async function() {
   var params = new URLSearchParams(location.search);
   var id = (params.get('p') || location.hash.replace(/#/, '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (!id) { document.querySelector('p').textContent = 'Código não encontrado.'; return; }
+
+  if (!id) { document.querySelector('p').textContent = 'Codigo nao encontrado.'; return; }
+
   try {
-    // 1. Verifica contatos.json — só redireciona se tiver pelo menos google OU instagram OU whatsapp preenchido
+    // Verifica contatos.json — se tiver Instagram, WhatsApp ou Wi-Fi vai para conecte.html
     try {
       var rc = await fetch('/contatos.json?_=' + Date.now());
-      if (rc.ok) {
-        var contatos = await rc.json();
-        var c = contatos[id] || contatos[id.toLowerCase()];
-        if (c && (c.google || c.instagram || c.whatsapp || c.wifi_nome)) {
-          location.replace('/conecte.html?p=' + id);
-          return;
-        }
+      var contatos = await rc.json();
+      var c = contatos[id] || contatos[id.toLowerCase()];
+      if (c && (c.instagram || c.whatsapp || c.wifi_nome)) {
+        location.replace('/conecte.html?p=' + id);
+        return;
       }
     } catch(e) {}
 
-    // 2. Fallback: placas.json — redireciona direto ao Google
+    // Sem campos Pro — vai direto para o Google pelo placas.json
     var res = await fetch('/placas.json?_=' + Date.now());
     var placas = await res.json();
     var url = placas[id] || placas[id.toLowerCase()] || '';
-    if (!url) { document.querySelector('p').textContent = 'Placa "' + id + '" não encontrada.'; return; }
+    if (!url) { document.querySelector('p').textContent = 'Placa "' + id + '" nao encontrada.'; return; }
     location.replace(url);
   } catch(e) {
     document.querySelector('p').textContent = 'Erro ao buscar placa.';
