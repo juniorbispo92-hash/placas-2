@@ -231,7 +231,7 @@ function commit(op,msg,attempt){
 }
 
 /* ---------- ações ---------- */
-function saveLink(id,client,dest,note){
+function saveLink(id,client,dest,note,contatos){
   var d=checkDest(dest);if(!d.ok)return Promise.reject({msg:d.msg});
   return commit(function(){
     var p=byId.get(id);if(!p)throw{msg:"Placa não encontrada."};
@@ -239,7 +239,20 @@ function saveLink(id,client,dest,note){
     if(p.dest&&p.dest!==nd)p.hist=(p.hist||[]).concat([{d:p.dest,t:now()}]).slice(-5);
     p.dest=nd;p.client=String(client||"").trim();p.note=String(note||"").trim();p.u=now();
     return d;
-  },"Placa "+id+": "+(d.empty?"link removido":"link atualizado"));
+  },"Placa "+id+": "+(d.empty?"link removido":"link atualizado")).then(function(r){
+    /* salva contatos.json com campos extras */
+    return getFile("contatos.json").then(function(cf){
+      var c={};try{c=cf.text?JSON.parse(cf.text):{}}catch(x){}
+      if(!c[id])c[id]={};
+      c[id].google=d.empty?"":d.url;
+      c[id].instagram=String(contatos.instagram||"").trim();
+      c[id].whatsapp=String(contatos.whatsapp||"").trim();
+      c[id].whatsapp_msg=String(contatos.whatsapp_msg||"").trim()||"Olá! Vi sua placa NFC.";
+      c[id].wifi_nome=String(contatos.wifi_nome||"").trim();
+      c[id].wifi_senha=String(contatos.wifi_senha||"").trim();
+      return putFile("contatos.json",JSON.stringify(c,null,1),cf.sha,"Placa "+id+": contatos atualizados");
+    }).then(function(){return r},function(){return r});/* ignora erro de contatos.json */
+  });
 }
 function removePlate(id){
   return commit(function(){
@@ -414,6 +427,13 @@ function sheetView(p){
    +'<div class="field"><label for="f-dest">Link de avaliação Google</label><input type="url" id="f-dest" value="'+esc(p.dest||"")+'" placeholder="https://search.google.com/local/writereview?placeid=…" inputmode="url"><div class="hint" id="dest-msg">Cole o link de avaliação do cliente.</div>'
    +'<div class="actions" style="margin-top:8px"><a class="btn" href="'+PRODUCTMATE+'" target="_blank" rel="noopener">Gerar link (ProductMate)</a>'+(p.dest?'<a class="btn" href="'+esc(p.dest)+'" target="_blank" rel="noopener">Testar link</a>':'')+'</div></div>'
    +'<div class="field"><label for="f-note">Nota interna</label><input type="text" id="f-note" value="'+esc(p.note||"")+'" placeholder="Ex.: entregue em 20/10"></div>'
+   +'<hr style="border:none;border-top:1px solid var(--border,#e5e7eb);margin:16px 0">'
+   +'<p class="hint" style="margin:0 0 12px;font-weight:600;color:var(--ink)">Botões da página de contato</p>'
+   +'<div class="field"><label for="f-instagram">Instagram (opcional)</label><input type="text" id="f-instagram" value="'+esc((p.contato&&p.contato.instagram)||"")+'" placeholder="@nomedobusiness"></div>'
+   +'<div class="field"><label for="f-whatsapp">WhatsApp (opcional)</label><input type="tel" id="f-whatsapp" value="'+esc((p.contato&&p.contato.whatsapp)||"")+'" placeholder="85999999999"></div>'
+   +'<div class="field"><label for="f-whatsapp-msg">Mensagem padrão do WhatsApp</label><input type="text" id="f-whatsapp-msg" value="'+esc((p.contato&&p.contato.whatsapp_msg)||"")+'" placeholder="Olá! Vi sua placa NFC."></div>'
+   +'<div class="field"><label for="f-wifi-nome">Nome da rede Wi-Fi (opcional)</label><input type="text" id="f-wifi-nome" value="'+esc((p.contato&&p.contato.wifi_nome)||"")+'" placeholder="MinhaRede"></div>'
+   +'<div class="field"><label for="f-wifi-senha">Senha do Wi-Fi (opcional)</label><input type="text" id="f-wifi-senha" value="'+esc((p.contato&&p.contato.wifi_senha)||"")+'" placeholder="senha123"></div>'
    +(ui.error?'<div class="notice bad">'+esc(ui.error)+'</div>':'')
    +'<div class="actions"><button class="btn primary" type="submit"'+(busy?' disabled':'')+'>'+(busy?'Salvando…':'Salvar')+'</button><button class="btn" type="button" data-act="close">Fechar</button></div>'
    +'<div style="margin-top:14px">'+(ui.confirmDel
@@ -425,7 +445,7 @@ function sheetView(p){
 }
 function render(){
   var act=document.activeElement&&document.activeElement.id,pos=null;try{pos=document.activeElement.selectionStart}catch(e){}
-  var keep={},prevOpen=render.open,prevTab=render.tab;["f-client","f-dest","f-note","g-qty","g-label","tk","nu","lu","d-from","d-to"].forEach(function(k){var el=document.getElementById(k);if(el)keep[k]=el.value});
+  var keep={},prevOpen=render.open,prevTab=render.tab;["f-client","f-dest","f-note","f-instagram","f-whatsapp","f-whatsapp-msg","f-wifi-nome","f-wifi-senha","g-qty","g-label","tk","nu","lu","d-from","d-to"].forEach(function(k){var el=document.getElementById(k);if(el)keep[k]=el.value});
   if(!token){root.innerHTML=loginView()}
   else if(!S){root.innerHTML='<div class="wrap login"><div class="stars" aria-hidden="true">★★★★★</div><h1>Placas NeoVibe</h1>'+(busy?'<p class="hint" style="text-align:center">Carregando placas…</p>':'<div class="notice bad">'+esc(ui.error||"Não foi possível carregar.")+'</div><button class="btn primary block" data-act="retry">Tentar de novo</button>')+'</div>'}
   else{
@@ -445,7 +465,16 @@ root.addEventListener("click",function(e){
   var t=e.target.closest("[data-act],[data-tab],[data-open],[data-filter]");if(!t)return;
   if(t.dataset.tab){ui.tab=t.dataset.tab;ui.error="";render();window.scrollTo(0,0);return}
   if(t.dataset.filter){ui.filter=t.dataset.filter;ui.page=0;render();return}
-  if(t.dataset.open){ui.open=t.dataset.open;ui.error="";ui.confirmDel=false;render();return}
+  if(t.dataset.open){
+    ui.open=t.dataset.open;ui.error="";ui.confirmDel=false;render();
+    /* carrega contatos.json para preencher os campos extras */
+    var pid=t.dataset.open;
+    getFile("contatos.json").then(function(cf){
+      var c={};try{c=cf.text?JSON.parse(cf.text):{}}catch(x){}
+      var plate=byId.get(pid);if(plate&&c[pid]){plate.contato=c[pid];render();}
+    }).catch(function(){});
+    return;
+  }
   var a=t.dataset.act;
   if(a==="close-bg"&&e.target!==t)return;
   if(a==="close"||a==="close-bg"){ui.open=null;ui.error="";ui.confirmDel=false;render()}
@@ -498,7 +527,8 @@ root.addEventListener("submit",function(e){
     saveAccess(u2,p1).then(function(){busy=false;ui.pass=false;render();toast("Usuário e senha salvos ✔ Valem em 1–2 minutos em outros celulares.")},function(err){busy=false;ui.error=(err&&(err.status===401||err.status===403))?"O GitHub recusou o token. Saia e entre de novo com um token novo.":"Não foi possível salvar. Verifique a internet.";render()});
   }else if(f.id==="edit"){
     ui.error="";
-    saveLink(f.dataset.id,document.getElementById("f-client").value,document.getElementById("f-dest").value,document.getElementById("f-note").value)
+    var contatos={instagram:document.getElementById("f-instagram").value,whatsapp:document.getElementById("f-whatsapp").value,whatsapp_msg:document.getElementById("f-whatsapp-msg").value,wifi_nome:document.getElementById("f-wifi-nome").value,wifi_senha:document.getElementById("f-wifi-senha").value};
+    saveLink(f.dataset.id,document.getElementById("f-client").value,document.getElementById("f-dest").value,document.getElementById("f-note").value,contatos)
       .then(function(d){ui.open=null;render();toast(d&&d.empty?"Link removido. Em 1–2 min a placa fica livre.":"Salvo ✔ Em 1–2 min o QR já leva à avaliação.")},function(err){if(err&&err.msg){var m=document.getElementById("dest-msg");if(m){m.textContent=err.msg;m.style.color="var(--bad)"}}});
   }else if(f.id==="gen"){
     var qty=document.getElementById("g-qty").value,label=document.getElementById("g-label").value;
