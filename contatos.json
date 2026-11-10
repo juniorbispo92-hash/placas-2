@@ -54,5 +54,13 @@
   "whatsapp_msg": "Olá!",
   "wifi_nome": "Mapla",
   "wifi_senha": "211801@mapla"
+ },
+ "AEPV4P": {
+  "google": "https://search.google.com/local/writereview?placeid=ChIJt_1JhVq1BgcR_qzAZ_TysDs",
+  "instagram": "",
+  "whatsapp": "",
+  "whatsapp_msg": "Ola! Vi sua placa NFC.",
+  "wifi_nome": "",
+  "wifi_senha": ""
  }
 }
